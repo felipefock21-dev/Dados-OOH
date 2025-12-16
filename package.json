@@ -1,0 +1,19 @@
+{
+  "name": "dados-ooh-cloudflare",
+  "version": "1.0.0",
+  "description": "Gerenciador de dados OOH via Google Sheets + Cloudflare Workers",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "pages:deploy": "wrangler pages deploy frontend",
+    "test": "echo \"Teste seus endpoints via curl ou Postman\""
+  },
+  "keywords": ["ooh", "cloudflare", "google-sheets", "crud"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@cloudflare/wrangler": "^3.0.0"
+  }
+}
