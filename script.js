@@ -50,10 +50,12 @@ async function carregarDados() {
     }
     
     atualizarTabela();
+    atualizarEstatisticas();
+    atualizarClientesDestaque();
     loadingSpinner.style.display = 'none';
   } catch (error) {
     console.error('Erro ao carregar dados:', error);
-    mostrarErro('Erro ao carregar dados da API. Verifique a conexão com o Cloudflare Worker.');
+    mostrarErro('Erro ao carregar dados da API. Verifique a conexão com o servidor.');
     dados = [];
     atualizarTabela();
     loadingSpinner.style.display = 'none';
@@ -97,6 +99,83 @@ function atualizarTabela() {
     
     tabelaDadosBody.appendChild(linha);
   });
+}
+
+function atualizarEstatisticas() {
+  // Total de registros
+  document.getElementById('statTotal').textContent = dados.length;
+  
+  // Clientes únicos
+  const clientesUnicos = new Set(dados.map(d => d['Cliente'])).size;
+  document.getElementById('statClientes').textContent = clientesUnicos;
+  
+  // Campanhas ativas
+  const campanhasAtivas = dados.filter(d => d['Status Campanha'] === 'Ativa').length;
+  document.getElementById('statCampanhas').textContent = campanhasAtivas;
+  
+  // Investimento total
+  let investimentoTotal = 0;
+  dados.forEach(registro => {
+    const investimento = registro['Investimento'] || 'R$ 0,00';
+    const valor = parseFloat(investimento.replace(/[^\d,]/g, '').replace(',', '.'));
+    investimentoTotal += isNaN(valor) ? 0 : valor;
+  });
+  document.getElementById('statInvestimento').textContent = `R$ ${investimentoTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+function atualizarClientesDestaque() {
+  const clientesContainer = document.getElementById('clientesContainer');
+  
+  // Agrupar por cliente
+  const clientesPorNome = {};
+  dados.forEach(registro => {
+    const cliente = registro['Cliente'] || 'Sem nome';
+    if (!clientesPorNome[cliente]) {
+      clientesPorNome[cliente] = {
+        nome: cliente,
+        status: registro['Status Cliente'],
+        campanhas: [],
+        investimento: 0,
+        registros: 0
+      };
+    }
+    clientesPorNome[cliente].campanhas.push(registro['Campanha']);
+    const investimento = parseFloat(
+      (registro['Investimento'] || 'R$ 0,00').replace(/[^\d,]/g, '').replace(',', '.')
+    );
+    clientesPorNome[cliente].investimento += isNaN(investimento) ? 0 : investimento;
+    clientesPorNome[cliente].registros += 1;
+  });
+  
+  // Converter para array e ordenar por investimento
+  const clientes = Object.values(clientesPorNome)
+    .sort((a, b) => b.investimento - a.investimento)
+    .slice(0, 6); // Mostrar top 6
+  
+  if (clientes.length === 0) {
+    clientesContainer.innerHTML = '<p class="loading">Nenhum cliente encontrado</p>';
+    return;
+  }
+  
+  clientesContainer.innerHTML = clientes.map(cliente => `
+    <div class="cliente-card">
+      <h3>${cliente.nome}</h3>
+      <div class="cliente-info">
+        <strong>Campanhas:</strong>
+        <span>${cliente.registros}</span>
+      </div>
+      <div class="cliente-info">
+        <strong>Investimento:</strong>
+        <span>R$ ${cliente.investimento.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+      </div>
+      <div class="cliente-info">
+        <strong>Status:</strong>
+        <span class="cliente-badge ${cliente.status === 'Ativo' ? 'badge-ativo' : 'badge-inativo'}">
+          ${cliente.status}
+        </span>
+      </div>
+    </div>
+  `).join('');
 }
 
 function filtrarTabela() {

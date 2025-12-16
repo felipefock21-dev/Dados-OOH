@@ -25,6 +25,133 @@ main {
   padding: 30px;
 }
 
+/* HEADER */
+.header {
+  background: linear-gradient(135deg, #0052cc 0%, #0066ff 100%);
+  color: white;
+  padding: 40px 30px;
+  text-align: center;
+  margin: -30px -30px 30px -30px;
+}
+
+.header h1 {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+}
+
+.header-subtitle {
+  font-size: 1.1em;
+  opacity: 0.9;
+}
+
+/* STATS SECTION */
+.stats-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.stat-card h3 {
+  font-size: 0.9em;
+  font-weight: 600;
+  opacity: 0.9;
+  margin-bottom: 10px;
+}
+
+.stat-number {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* CLIENTES SECTION */
+.clientes-section h2 {
+  margin-bottom: 20px;
+  color: #0052cc;
+  font-size: 1.8em;
+}
+
+.clientes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.cliente-card {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.cliente-card:hover {
+  border-color: #0052cc;
+  box-shadow: 0 8px 16px rgba(0, 82, 204, 0.15);
+  transform: translateY(-2px);
+}
+
+.cliente-card h3 {
+  color: #0052cc;
+  margin-bottom: 12px;
+  font-size: 1.2em;
+}
+
+.cliente-info {
+  font-size: 0.95em;
+  margin: 8px 0;
+  color: #666;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cliente-info strong {
+  color: #333;
+}
+
+.cliente-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.badge-ativo {
+  background: #d4edda;
+  color: #155724;
+}
+
+.badge-inativo {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+}
+
 /* SEARCH SECTION */
 .search-section {
   display: flex;
