@@ -1,5 +1,5 @@
 name = "dados-ooh-worker"
-main = "src/index.js"
+main = "worker.js"
 compatibility_date = "2025-12-16"
 compatibility_flags = ["nodejs_compat"]
 
@@ -8,3 +8,8 @@ name = "dados-ooh-worker-prod"
 
 [build]
 command = "npm install"
+
+# Para Cloudflare Pages
+[site]
+bucket = "."
+
