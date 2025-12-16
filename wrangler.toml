@@ -1,18 +1,22 @@
 name = "dados-ooh"
-main = "worker.js"
 type = "javascript"
+main = "worker.js"
 compatibility_date = "2025-12-16"
-compatibility_flags = ["nodejs_compat"]
 
-# Para Cloudflare Pages servir arquivos estáticos
+# Para Cloudflare Pages
 [site]
 bucket = "./public"
+include = ["public/**/*"]
+exclude = []
 
-# Workers para API
-[routes]
-pattern = "*/api/*"
-zone_name = "seu-dominio.com"
+# Para _routes.json
+[[build.upload.rules]]
+type = "CompiledContentType"
+globs = ["**/*.wasm"]
+fallthrough = true
 
-[env.production]
-name = "dados-ooh-prod"
+[[build.upload.rules]]
+type = "Text"
+globs = ["**/*.txt", "**/*.html"]
+fallthrough = true
 

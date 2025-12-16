@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciador de Dados OOH</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📊 Gerenciador de Dados OOH</h1>
+      <p>Sistema de CRUD para Google Sheets</p>
+    </header>
+
+    <main>
+      <!-- SEÇÃO DE BUSCA E FILTROS -->
+      <section class="search-section">
+        <input 
+          type="text" 
+          id="searchInput" 
+          placeholder="🔍 Buscar por cliente, campanha, cidade..."
+          class="search-input"
+        >
+        <button id="btnNovoRegistro" class="btn btn-primary">+ Novo Registro</button>
+      </section>
+
+      <!-- TABELA DE DADOS -->
+      <section class="table-section">
+        <div id="loadingSpinner" class="spinner">Carregando dados...</div>
+        <div id="errorMessage" class="error-message"></div>
+        
+        <table id="tabelaDados" class="table">
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Campanha</th>
+              <th>Tipo OOH</th>
+              <th>Status</th>
+              <th>Cidade</th>
+              <th>Investimento</th>
+              <th>Impactos</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaDadosBody">
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <!-- MODAL DE FORMULÁRIO -->
+    <div id="modalFormulario" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalTitulo">Novo Registro</h2>
+        
+        <form id="formularioDados" class="form-grid">
+          <!-- LINHA 1 -->
+          <div class="form-group">
+            <label for="cliente">Cliente *</label>
+            <input type="text" id="cliente" name="Cliente" required>
+          </div>
+
+          <div class="form-group">
+            <label for="statusCliente">Status Cliente *</label>
+            <select id="statusCliente" name="Status Cliente" required>
+              <option value="">Selecione...</option>
+              <option value="Ativo">Ativo</option>
+              <option value="Inativo">Inativo</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="campanha">Campanha *</label>
+            <input type="text" id="campanha" name="Campanha" required>
+          </div>
+
+          <!-- LINHA 2 -->
+          <div class="form-group">
+            <label for="tipoOOH">Tipo de OOH *</label>
+            <select id="tipoOOH" name="Tipo de OOH" required>
+              <option value="">Selecione...</option>
+              <option value="Outdoor">Outdoor</option>
+              <option value="Dooh">Dooh</option>
+              <option value="Truck LED">Truck LED</option>
+              <option value="LED">LED</option>
+              <option value="Frontlight">Frontlight</option>
+              <option value="Empena">Empena</option>
+              <option value="Telas Indoor">Telas Indoor</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="statusCampanha">Status Campanha *</label>
+            <select id="statusCampanha" name="Status Campanha" required>
+              <option value="">Selecione...</option>
+              <option value="Ativa">Ativa</option>
+              <option value="Inativa">Inativa</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="regiao">Região *</label>
+            <input type="text" id="regiao" name="Região" required>
+          </div>
+
+          <!-- LINHA 3 -->
+          <div class="form-group">
+            <label for="estado">Estado *</label>
+            <input type="text" id="estado" name="Estado" maxlength="2" required>
+          </div>
+
+          <div class="form-group">
+            <label for="cidade">Cidade *</label>
+            <input type="text" id="cidade" name="Cidade" required>
+          </div>
+
+          <div class="form-group">
+            <label for="exibidora">Exibidora *</label>
+            <input type="text" id="exibidora" name="Exibidora" required>
+          </div>
+
+          <div class="form-group">
+            <label for="urlLogo">URL Logo Exibidora</label>
+            <input type="url" id="urlLogo" name="URL logo exibidora">
+          </div>
+
+          <!-- LINHA 4 -->
+          <div class="form-group">
+            <label for="mesExibicao">Mês de Exibição *</label>
+            <input type="text" id="mesExibicao" name="Mês de exibição" placeholder="Ex: Dezembro" required>
+          </div>
+
+          <div class="form-group">
+            <label for="inicioData">Início da Campanha *</label>
+            <input type="text" id="inicioData" name="Início da campanha" placeholder="DD/MM" required>
+          </div>
+
+          <div class="form-group">
+            <label for="terminoData">Término da Campanha *</label>
+            <input type="text" id="terminoData" name="Término da campanha" placeholder="DD/MM" required>
+          </div>
+
+          <!-- LINHA 5 -->
+          <div class="form-group">
+            <label for="impactos">Impactos Total *</label>
+            <input type="number" id="impactos" name="Impactos Total" required>
+          </div>
+
+          <div class="form-group">
+            <label for="investimento">Investimento *</label>
+            <input type="text" id="investimento" name="Investimento" placeholder="R$ 0,00" required>
+          </div>
+
+          <div class="form-group">
+            <label for="mediaCoin">Mídia Coin *</label>
+            <input type="number" step="0.01" id="mediaCoin" name="Mídia Coin" required>
+          </div>
+
+          <!-- NOTAS -->
+          <div class="form-group">
+            <label for="notaBonificacao">Bonificação (0-10)</label>
+            <input type="number" min="0" max="10" id="notaBonificacao" name="(NOTA) Bonificação">
+          </div>
+
+          <div class="form-group">
+            <label for="notaFlexibilidade">Flexibilidade (0-10)</label>
+            <input type="number" min="0" max="10" id="notaFlexibilidade" name="(NOTA) Flexibilidade em Negociação">
+          </div>
+
+          <div class="form-group">
+            <label for="notaAtendimento">Atendimento (0-10)</label>
+            <input type="number" min="0" max="10" id="notaAtendimento" name="(NOTA) Atendimento">
+          </div>
+
+          <div class="form-group">
+            <label for="notaProcessos">Processos ADM e FIN (0-10)</label>
+            <input type="number" min="0" max="10" id="notaProcessos" name="(NOTA) Processos ADM e FIN">
+          </div>
+
+          <!-- BOTÕES -->
+          <div class="form-actions" style="grid-column: 1 / -1;">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <button type="button" class="btn btn-secondary" id="btnCancelar">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL DE CONFIRMAÇÃO -->
+    <div id="modalConfirmacao" class="modal">
+      <div class="modal-content modal-confirmacao">
+        <h2>Confirmar Exclusão</h2>
+        <p id="msgConfirmacao"></p>
+        <div class="form-actions">
+          <button id="btnConfirmarDelete" class="btn btn-danger">Deletar</button>
+          <button id="btnCancelarDelete" class="btn btn-secondary">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
