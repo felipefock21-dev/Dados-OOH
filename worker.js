@@ -18,7 +18,8 @@ const corsHeaders = {
 // Função para listar dados
 async function getDados(env) {
   try {
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${env.GOOGLE_SHEETS_API_KEY}`;
+    // Busca TODAS as linhas da planilha (até 100 mil linhas)
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}!A:Z?key=${env.GOOGLE_SHEETS_API_KEY}`;
     
     const response = await fetch(url);
     const data = await response.json();
