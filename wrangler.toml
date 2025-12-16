@@ -3,20 +3,6 @@ type = "javascript"
 main = "worker.js"
 compatibility_date = "2025-12-16"
 
-# Para Cloudflare Pages
 [site]
 bucket = "./public"
-include = ["public/**/*"]
-exclude = []
-
-# Para _routes.json
-[[build.upload.rules]]
-type = "CompiledContentType"
-globs = ["**/*.wasm"]
-fallthrough = true
-
-[[build.upload.rules]]
-type = "Text"
-globs = ["**/*.txt", "**/*.html"]
-fallthrough = true
 
