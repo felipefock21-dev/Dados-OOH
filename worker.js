@@ -3,9 +3,10 @@
  * Deploy: wrangler deploy
  */
 
-const SHEETS_API_KEY = env.GOOGLE_SHEETS_API_KEY || '';
-const SHEET_ID = env.GOOGLE_SHEETS_ID || '';
-const SHEET_NAME = env.GOOGLE_SHEET_NAME || 'Sheet1';
+// As variáveis virão via env no contexto do handler
+let SHEETS_API_KEY = '';
+let SHEET_ID = '';
+let SHEET_NAME = 'Sheet1';
 
 // Headers CORS
 const corsHeaders = {
@@ -18,8 +19,22 @@ const corsHeaders = {
 // Função para listar dados
 async function getDados(env) {
   try {
+    const apiKey = env.GOOGLE_SHEETS_API_KEY;
+    const sheetId = env.GOOGLE_SHEETS_ID;
+    const sheetName = env.GOOGLE_SHEET_NAME || 'Sheet1';
+    
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Google Sheets API Error: ${response.status} - ${errorData.error?.message || response.statusText}`);
+    }
+    
+    if (!apiKey || !sheetId) {
+      throw new Error('GOOGLE_SHEETS_API_KEY ou GOOGLE_SHEETS_ID não configurados');
+    }
+    
     // Busca TODAS as linhas da planilha (até 100 mil linhas)
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}!A:Z?key=${env.GOOGLE_SHEETS_API_KEY}`;
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}!A:Z?key=${apiKey}`;
     
     const response = await fetch(url);
     const data = await response.json();
@@ -40,17 +55,15 @@ async function getDados(env) {
     return { dados, headers };
   } catch (error) {
     throw new Error(`Erro ao buscar dados: ${error.message}`);
-  }
-}
-
-// Função para adicionar registro
-async function addDado(env, novoRegistro) {
-  try {
-    const { dados, headers } = await getDados(env);
+  }apiKey = env.GOOGLE_SHEETS_API_KEY;
+    const sheetId = env.GOOGLE_SHEETS_ID;
+    const sheetName = env.GOOGLE_SHEET_NAME || 'Sheet1';
+    
+    const { headers } = await getDados(env);
     
     const novaLinha = headers.map(h => novoRegistro[h] || '');
     
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}:append?valueInputOption=USER_ENTERED&key=${env.GOOGLE_SHEETS_API_KEY}`;
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}:append?valueInputOption=USER_ENTERED&key=${apiKey}`;
     
     const response = await fetch(url, {
       method: 'POST',
@@ -59,18 +72,18 @@ async function addDado(env, novoRegistro) {
     });
 
     if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Erro na API: ${errorData.error?.message || 
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ values: [novaLinha] }),
+    });
+
+    if (!response.ok) {
       throw new Error(`Erro na API: ${response.statusText}`);
-    }
-
-    return { sucesso: true, mensagem: 'Registro adicionado' };
-  } catch (error) {
-    throw new Error(`Erro ao adicionar: ${error.message}`);
-  }
-}
-
-// Função para atualizar registro
-async function updateDado(env, id, registroAtualizado) {
-  try {
+    }apiKey = env.GOOGLE_SHEETS_API_KEY;
+    const sheetId = env.GOOGLE_SHEETS_ID;
+    const sheetName = env.GOOGLE_SHEET_NAME || 'Sheet1';
+    
     const { dados, headers } = await getDados(env);
     
     if (id < 0 || id >= dados.length) {
@@ -81,8 +94,9 @@ async function updateDado(env, id, registroAtualizado) {
     
     // Linha real na planilha (id + 2 porque linha 1 é cabeçalho)
     const linhaReal = id + 2;
+    const colunaFinal = String.fromCharCode(64 + headers.length); // Converte número para coluna
     
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}!A${linhaReal}:T${linhaReal}?valueInputOption=USER_ENTERED&key=${env.GOOGLE_SHEETS_API_KEY}`;
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}!A${linhaReal}:${colunaFinal}${linhaReal}?valueInputOption=USER_ENTERED&key=${apiKey}`;
     
     const response = await fetch(url, {
       method: 'PUT',
@@ -91,20 +105,38 @@ async function updateDado(env, id, registroAtualizado) {
     });
 
     if (!response.ok) {
-      throw new Error(`Erro na API: ${response.statusText}`);
-    }
-
-    return { sucesso: true, mensagem: 'Registro atualizado' };
-  } catch (error) {
-    throw new Error(`Erro ao atualizar: ${error.message}`);
-  }
-}
-
-// Função para deletar registro
-async function deleteDado(env, id) {
-  try {
+      const errorData = await response.json();
+      throw new Error(`Erro na API: ${errorData.error?.message || 
+    
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}!A${linhaReal}:T${linhaReal}?valueInputOption=USER_ENTERED&key=${env.GOOGLE_SHEETS_API_KEY}`;
+    
+    const response = await fetch(url, {
+      method: 'PUT',
+      headapiKey = env.GOOGLE_SHEETS_API_KEY;
+    const sheetId = env.GOOGLE_SHEETS_ID;
+    const sheetName = env.GOOGLE_SHEET_NAME || 'Sheet1';
+    
     const { dados, headers } = await getDados(env);
     
+    if (id < 0 || id >= dados.length) {
+      throw new Error('Registro não encontrado');
+    }
+
+    const linhaReal = id + 2;
+    const linhaVazia = new Array(headers.length).fill('');
+    const colunaFinal = String.fromCharCode(64 + headers.length);
+    
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}!A${linhaReal}:${colunaFinal}${linhaReal}?valueInputOption=USER_ENTERED&key=${apiKey}`;
+    
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ values: [linhaVazia] }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Erro na API: ${errorData.error?.message || 
     if (id < 0 || id >= dados.length) {
       throw new Error('Registro não encontrado');
     }
