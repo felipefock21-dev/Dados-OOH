@@ -1,15 +1,18 @@
-name = "dados-ooh-worker"
+name = "dados-ooh"
 main = "worker.js"
+type = "javascript"
 compatibility_date = "2025-12-16"
 compatibility_flags = ["nodejs_compat"]
 
-[env.production]
-name = "dados-ooh-worker-prod"
-
-[build]
-command = "npm install"
-
-# Para Cloudflare Pages
+# Para Cloudflare Pages servir arquivos estáticos
 [site]
-bucket = "."
+bucket = "./public"
+
+# Workers para API
+[routes]
+pattern = "*/api/*"
+zone_name = "seu-dominio.com"
+
+[env.production]
+name = "dados-ooh-prod"
 

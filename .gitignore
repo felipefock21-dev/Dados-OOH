@@ -1,7 +1,5 @@
-# Frontend (local development)
-index.html
-style.css
-script.js
+# Frontend local (removido de public/)
+# Estes arquivos estão em public/ e SERÃO commitados
 
 # Dependencies
 node_modules/
