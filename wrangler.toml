@@ -1,8 +1,10 @@
-name = "dados-ooh"
-type = "javascript"
-main = "worker.js"
+name = "dados-ooh-worker"
+main = "src/index.js"
 compatibility_date = "2025-12-16"
+compatibility_flags = ["nodejs_compat"]
 
-[site]
-bucket = "./public"
+[env.production]
+name = "dados-ooh-worker-prod"
 
+[build]
+command = "npm install"

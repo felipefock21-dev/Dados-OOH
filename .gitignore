@@ -30,29 +30,6 @@ yarn-error.log*
 dist/
 build/
 .next/
-
-# Misc
-.cache/
-*.tmp
-
-# IMPORTANTE: NÃO ignorar a pasta public/ - ela contém os arquivos do site
-!public/
-!public/**
-*.vimrc
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Build
-dist/
-build/
-.next/
 /public/
 
 # Misc
