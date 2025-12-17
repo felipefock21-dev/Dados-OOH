@@ -98,11 +98,10 @@
     // CONFIGURAÇÃO DA API
     // ============================================
     
-    // Detectar URL do Worker do Cloudflare
-    const WORKER_URL = 'https://dados-ooh-worker.kaike-458.workers.dev';
-    const API_BASE = `${WORKER_URL}/api`;
+    // Usar Worker direto (secrets configurados no Cloudflare)
+    const API_BASE = 'https://dados-ooh-worker.kaike-458.workers.dev/api';
     
-    console.log('🚀 API_BASE configurada para:', API_BASE);
+    console.log('🚀 API_BASE:', API_BASE);
     
     // ============================================
     // ESTADO E DOM
