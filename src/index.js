@@ -14,26 +14,30 @@ const corsHeaders = {
 // Função para listar dados
 async function getDados(env) {
   try {
+    console.log('=== getDados START ===');
+    console.log('env keys:', Object.keys(env));
+    console.log('env.GOOGLE_SHEETS_API_KEY exists:', !!env.GOOGLE_SHEETS_API_KEY);
+    console.log('env.GOOGLE_SHEETS_ID exists:', !!env.GOOGLE_SHEETS_ID);
+    
     const apiKey = env.GOOGLE_SHEETS_API_KEY;
     const sheetId = env.GOOGLE_SHEETS_ID;
-    // GOOGLE_SHEET_NAME vem de env.vars ou como secret
     const sheetName = (env.GOOGLE_SHEET_NAME || env.vars?.GOOGLE_SHEET_NAME || 'Visão geral').trim();
     
-    console.log('getDados called with:');
-    console.log('- apiKey:', apiKey ? '✓ present' : '✗ missing');
-    console.log('- sheetId:', sheetId ? '✓ present' : '✗ missing');
-    console.log('- sheetName:', sheetName);
-    
     if (!apiKey || !sheetId) {
-      throw new Error(`Configuração incompleta: apiKey=${!!apiKey}, sheetId=${!!sheetId}, sheetName=${sheetName}`);
+      console.error('Missing secrets!');
+      console.error('apiKey:', apiKey ? 'present' : 'MISSING');
+      console.error('sheetId:', sheetId ? 'present' : 'MISSING');
+      throw new Error(`Configuração incompleta: apiKey=${!!apiKey}, sheetId=${!!sheetId}`);
     }
+    
+    console.log('Secrets OK. Sheet:', sheetName);
     
     // Google Sheets API exige que o nome da aba com espaços seja entre aspas simples
     const sheetRange = `'${sheetName}'!A:AE`;
     const encodedRange = encodeURI(sheetRange);
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodedRange}?key=${apiKey}`;
     
-    console.log('URL:', url.substring(0, 80) + '...');
+    console.log('Requesting:', url.substring(0, 100) + '...');
     
     const response = await fetch(url);
     const data = await response.json();
@@ -59,7 +63,7 @@ async function getDados(env) {
       return obj;
     });
 
-    console.log(`Loaded ${dados.length} records with ${headers.length} columns`);
+    console.log(`✓ Loaded ${dados.length} records`);
     return { dados, headers };
   } catch (error) {
     console.error('getDados error:', error.message);
