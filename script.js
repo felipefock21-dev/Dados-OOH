@@ -2,9 +2,15 @@
 let dados = [];
 let registroEmEdicao = null;
 // API_BASE será definido dinamicamente baseado no ambiente
-const API_BASE = window.location.hostname === 'localhost' 
-  ? 'http://localhost:3001/api'
-  : 'https://seu-worker.seu-dominio.workers.dev/api'; // Mude para seu worker URL
+let API_BASE = localStorage.getItem('API_BASE') || 
+  (new URLSearchParams(window.location.search).get('api') || 
+  'https://seu-worker.seu-subdominio.workers.dev/api');
+
+// Se estiver localhost, permite debug mode
+if (window.location.hostname === 'localhost') {
+  API_BASE = localStorage.getItem('API_BASE') || 'http://localhost:3001/api';
+  console.log('🔧 Modo Debug - API_BASE:', API_BASE);
+}
 
 // Elementos do DOM
 const modal = document.getElementById('modalFormulario');
