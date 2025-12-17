@@ -19,15 +19,23 @@ async function getDados(env) {
     const sheetName = env.GOOGLE_SHEET_NAME || 'Visão geral';
     
     if (!apiKey || !sheetId) {
-      throw new Error('GOOGLE_SHEETS_API_KEY ou GOOGLE_SHEETS_ID não configurados');
+      throw new Error(`Configuração incompleta: apiKey=${!!apiKey}, sheetId=${!!sheetId}`);
     }
     
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(sheetName)}!A:AE?key=${apiKey}`;
+    // Google Sheets API exige que o nome da aba com espaços seja entre aspas simples
+    const sheetRange = `'${sheetName}'!A:AE`;
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(sheetRange)}?key=${apiKey}`;
+    
+    console.log('Fetching from:', url.substring(0, 100) + '...');
     
     const response = await fetch(url);
     const data = await response.json();
     
+    console.log('Response status:', response.status);
+    console.log('Response ok:', response.ok);
+    
     if (!response.ok) {
+      console.error('Google Sheets Error:', JSON.stringify(data));
       throw new Error(`Google Sheets API Error: ${response.status} - ${data.error?.message || response.statusText}`);
     }
     
@@ -46,6 +54,7 @@ async function getDados(env) {
 
     return { dados, headers };
   } catch (error) {
+    console.error('getDados error:', error);
     throw new Error(`Erro ao buscar dados: ${error.message}`);
   }
 }
@@ -226,8 +235,12 @@ export default {
         headers: corsHeaders,
       });
     } catch (error) {
+      console.error('Route error:', error);
       return new Response(
-        JSON.stringify({ erro: error.message }),
+        JSON.stringify({ 
+          erro: error.message,
+          detalhes: error.stack 
+        }),
         { status: 500, headers: corsHeaders }
       );
     }
