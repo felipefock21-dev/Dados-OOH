@@ -76,7 +76,11 @@ app.get('/auth', (req, res) => {
 app.get('/api/dados', async (req, res) => {
   try {
     if (!accessToken) {
-      return res.status(401).json({ erro: 'Não autenticado. Acesse http://localhost:3001/auth primeiro.' });
+      return res.status(401).json({ 
+        erro: 'Não autenticado',
+        mensagem: 'Você precisa autenticar com Google Sheets primeiro',
+        authUrl: '/auth'
+      });
     }
     
     // Se tem token, configura as credenciais

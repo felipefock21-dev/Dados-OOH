@@ -39,6 +39,13 @@ async function carregarDados() {
     const response = await fetch(`${API_BASE}/dados`);
     
     if (!response.ok) {
+      if (response.status === 401) {
+        mostrarErro('❌ Não autenticado. Redirecionando para autenticação...');
+        setTimeout(() => {
+          window.location.href = 'http://localhost:3001/auth';
+        }, 2000);
+        return;
+      }
       throw new Error(`Erro HTTP! Status: ${response.status}`);
     }
     
@@ -53,7 +60,7 @@ async function carregarDados() {
     loadingSpinner.style.display = 'none';
   } catch (error) {
     console.error('Erro ao carregar dados:', error);
-    mostrarErro('Erro ao carregar dados da API. Verifique a conexão com o servidor.');
+    mostrarErro('❌ Erro ao carregar dados. Verifique se o servidor está rodando em http://localhost:3001');
     dados = [];
     atualizarTabela();
     loadingSpinner.style.display = 'none';
