@@ -23,14 +23,10 @@ async function getDados(env) {
     const sheetId = env.GOOGLE_SHEETS_ID;
     const sheetName = (env.GOOGLE_SHEET_NAME || env.vars?.GOOGLE_SHEET_NAME || 'Visão geral').trim();
     
-    if (!apiKey || !sheetId) {
-      console.error('Missing secrets!');
-      console.error('apiKey:', apiKey ? 'present' : 'MISSING');
-      console.error('sheetId:', sheetId ? 'present' : 'MISSING');
-      throw new Error(`Configuração incompleta: apiKey=${!!apiKey}, sheetId=${!!sheetId}`);
-    }
-    
-    console.log('Secrets OK. Sheet:', sheetName);
+    console.log('API Key length:', apiKey?.length);
+    console.log('API Key preview:', apiKey ? apiKey.substring(0, 20) + '...' : 'UNDEFINED');
+    console.log('Sheet ID:', sheetId);
+    console.log('Sheet Name:', sheetName);
     
     // Google Sheets API exige que o nome da aba com espaços seja entre aspas simples
     const sheetRange = `'${sheetName}'!A:AE`;
