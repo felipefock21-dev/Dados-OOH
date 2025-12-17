@@ -1,23 +1,66 @@
 # 📊 Gerenciador de Dados OOH
 
-Sistema web para gerenciar dados de campanhas OOH (Out of Home) via **Google Sheets API** + **Cloudflare Workers**.
+Sistema de gerenciamento de dados Out-of-Home integrado com Google Sheets via Cloudflare Workers.
 
-## 🚀 Funcionalidades
+## 🚀 Status
 
-- ✅ **Listar** todos os registros
-- ✅ **Criar** novos registros
-- ✅ **Editar** registros existentes
-- ✅ **Deletar** registros
-- ✅ **Buscar/Filtrar** por qualquer campo
-- ✅ **Integração com Google Sheets**
-- ✅ **Interface responsiva e intuitiva**
+✅ **Sistema 100% funcional e deployado**
 
-## 📋 Estrutura de Dados
+- **Worker API**: https://dados-ooh-worker.kaike-458.workers.dev/api
+- **Frontend**: Roda localmente ou em Cloudflare Pages
 
-A planilha contém 20 colunas:
+## 📁 Estrutura Funcional
 
-| Campo | Tipo | Exemplo |
-|-------|------|---------|
+```
+projeto/
+├── src/index.js          ← Worker do Cloudflare (API REST)
+├── index.html            ← Frontend (HTML + CSS + JS inline)
+├── style.css             ← Estilos
+├── wrangler.toml         ← Configuração Cloudflare
+└── .env                  ← Secrets (não versionado)
+```
+
+## ⚙️ Como Usar
+
+### Localmente
+
+```bash
+# Servir frontend
+python -m http.server 8000
+
+# Abrir em http://localhost:8000/index.html
+```
+
+### Deploy no Cloudflare
+
+```bash
+# Fazer alterações no Worker
+# Editar src/index.js
+
+# Deploy
+wrangler deploy --env=""
+```
+
+## 📊 Funcionalidades
+
+- ✅ Listar clientes com dados agregados
+- ✅ Criar novos registros
+- ✅ Editar clientes
+- ✅ Deletar registros
+- ✅ Buscar/Filtrar por nome
+- ✅ Sincronização em tempo real com Google Sheets
+
+## 🔑 Configuração
+
+Secrets já configurados no Cloudflare:
+- `GOOGLE_SHEETS_API_KEY` - Chave da API
+- `GOOGLE_SHEETS_ID` - ID da planilha
+- `GOOGLE_SHEET_NAME` - Nome da aba (Visão geral)
+
+---
+
+**Zero dependências de servidor local. Totalmente serverless via Cloudflare.**
+
 | Cliente | Texto | Madeira Madeira |
 | Status Cliente | Select | Ativo/Inativo |
 | Campanha | Texto | julho 2025 |

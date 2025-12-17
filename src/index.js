@@ -16,23 +16,28 @@ async function getDados(env) {
   try {
     const apiKey = env.GOOGLE_SHEETS_API_KEY;
     const sheetId = env.GOOGLE_SHEETS_ID;
-    const sheetName = env.GOOGLE_SHEET_NAME || 'Visão geral';
+    // GOOGLE_SHEET_NAME vem de env.vars ou como secret
+    const sheetName = (env.GOOGLE_SHEET_NAME || env.vars?.GOOGLE_SHEET_NAME || 'Visão geral').trim();
+    
+    console.log('getDados called with:');
+    console.log('- apiKey:', apiKey ? '✓ present' : '✗ missing');
+    console.log('- sheetId:', sheetId ? '✓ present' : '✗ missing');
+    console.log('- sheetName:', sheetName);
     
     if (!apiKey || !sheetId) {
-      throw new Error(`Configuração incompleta: apiKey=${!!apiKey}, sheetId=${!!sheetId}`);
+      throw new Error(`Configuração incompleta: apiKey=${!!apiKey}, sheetId=${!!sheetId}, sheetName=${sheetName}`);
     }
     
     // Google Sheets API exige que o nome da aba com espaços seja entre aspas simples
     const sheetRange = `'${sheetName}'!A:AE`;
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(sheetRange)}?key=${apiKey}`;
     
-    console.log('Fetching from:', url.substring(0, 100) + '...');
+    console.log('URL:', url.substring(0, 80) + '...');
     
     const response = await fetch(url);
     const data = await response.json();
     
     console.log('Response status:', response.status);
-    console.log('Response ok:', response.ok);
     
     if (!response.ok) {
       console.error('Google Sheets Error:', JSON.stringify(data));
@@ -40,6 +45,7 @@ async function getDados(env) {
     }
     
     if (!data.values || data.values.length === 0) {
+      console.log('No values returned');
       return { dados: [], headers: [] };
     }
 
@@ -52,10 +58,11 @@ async function getDados(env) {
       return obj;
     });
 
+    console.log(`Loaded ${dados.length} records with ${headers.length} columns`);
     return { dados, headers };
   } catch (error) {
-    console.error('getDados error:', error);
-    throw new Error(`Erro ao buscar dados: ${error.message}`);
+    console.error('getDados error:', error.message);
+    throw error;
   }
 }
 
