@@ -30,7 +30,8 @@ async function getDados(env) {
     
     // Google Sheets API exige que o nome da aba com espaços seja entre aspas simples
     const sheetRange = `'${sheetName}'!A:AE`;
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(sheetRange)}?key=${apiKey}`;
+    const encodedRange = encodeURI(sheetRange);
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodedRange}?key=${apiKey}`;
     
     console.log('URL:', url.substring(0, 80) + '...');
     
