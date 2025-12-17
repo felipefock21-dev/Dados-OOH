@@ -21,7 +21,8 @@ async function getDados(env) {
     
     const apiKey = env.GOOGLE_SHEETS_API_KEY;
     const sheetId = env.GOOGLE_SHEETS_ID;
-    const sheetName = (env.GOOGLE_SHEET_NAME || env.vars?.GOOGLE_SHEET_NAME || 'Visão geral').trim();
+    // HARDCODED: O nome da aba é "Visão geral" - UTF-8 precisa estar aqui direto
+    const sheetName = 'Visão geral';
     
     console.log('API Key length:', apiKey?.length);
     console.log('API Key preview:', apiKey ? apiKey.substring(0, 20) + '...' : 'UNDEFINED');
