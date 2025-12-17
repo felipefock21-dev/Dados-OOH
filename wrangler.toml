@@ -1,0 +1,19 @@
+name = "dados-ooh-worker"
+main = "src/index.js"
+compatibility_date = "2025-12-16"
+compatibility_flags = ["nodejs_compat"]
+account_id = "458e6d616cddf6660731e71235fe4c45"
+
+[env.production]
+name = "dados-ooh-worker-prod"
+
+# Variáveis de ambiente
+[env.development]
+vars = { GOOGLE_SHEET_NAME = "Sheet1" }
+
+[[env.development.r2_buckets]]
+
+[[env.development.d1_databases]]
+
+# Segredos - configure via wrangler secret put GOOGLE_SHEETS_API_KEY
+# wrangler secret put GOOGLE_SHEETS_ID

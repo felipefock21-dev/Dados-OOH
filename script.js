@@ -4,7 +4,7 @@ let registroEmEdicao = null;
 // API_BASE será definido dinamicamente baseado no ambiente
 let API_BASE = localStorage.getItem('API_BASE') || 
   (new URLSearchParams(window.location.search).get('api') || 
-  'https://seu-worker.seu-subdominio.workers.dev/api');
+  'https://dados-ooh-worker.kaike-458.workers.dev/api');
 
 // Se estiver localhost, permite debug mode
 if (window.location.hostname === 'localhost') {
