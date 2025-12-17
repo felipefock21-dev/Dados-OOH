@@ -28,15 +28,14 @@ async function getDados(env) {
     console.log('Sheet ID:', sheetId);
     console.log('Sheet Name:', sheetName);
     
-    // Google Sheets API exige que o nome da aba com espaços seja entre aspas simples
+    // Google Sheets API exibe que o nome da aba com espaços seja entre aspas simples
     const sheetRange = `'${sheetName}'!A:AE`;
-    const encodedRange = encodeURI(sheetRange);
     
-    // Construir URL com chave de API
-    let url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodedRange}`;
-    url += `?key=${apiKey}`;
+    // Construir URL com chave de API (usar encodeURIComponent para o range)
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(sheetRange)}?key=${apiKey}`;
     
-    console.log('Full URL key check:', url.includes('key='), 'apiKey length:', apiKey.length);
+    console.log('Full URL:', url);
+    console.log('API Key present in URL:', url.includes(`?key=${apiKey.substring(0,10)}`));
     
     const response = await fetch(url);
     const data = await response.json();
