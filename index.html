@@ -8,67 +8,31 @@
 </head>
 <body>
   <div class="container">
-    <header class="header">
-      <h1>📊 Gerenciador de Dados OOH</h1>
-      <p class="header-subtitle">Campanhas, clientes e dados de Out-of-Home</p>
-    </header>
-
     <main>
       <!-- SEÇÃO DE BUSCA E FILTROS -->
       <section class="search-section">
         <input 
           type="text" 
           id="searchInput" 
-          placeholder="🔍 Buscar por cliente, campanha, cidade..."
+          placeholder="🔍 Buscar cliente..."
           class="search-input"
         >
-        <button id="btnNovoRegistro" class="btn btn-primary">+ Novo Registro</button>
+        <button id="btnNovoRegistro" class="btn btn-primary">+ Novo Cliente</button>
       </section>
 
-      <!-- SEÇÃO DE ESTATÍSTICAS -->
-      <section class="stats-section">
-        <div class="stat-card">
-          <h3>Total de Registros</h3>
-          <p id="statTotal" class="stat-number">0</p>
-        </div>
-        <div class="stat-card">
-          <h3>Clientes Únicos</h3>
-          <p id="statClientes" class="stat-number">0</p>
-        </div>
-        <div class="stat-card">
-          <h3>Campanhas Ativas</h3>
-          <p id="statCampanhas" class="stat-number">0</p>
-        </div>
-        <div class="stat-card">
-          <h3>Investimento Total</h3>
-          <p id="statInvestimento" class="stat-number">R$ 0</p>
-        </div>
-      </section>
-
-      <!-- SEÇÃO DE CLIENTES DESTAQUE -->
-      <section class="clientes-section">
-        <h2>🏢 Clientes</h2>
-        <div id="clientesContainer" class="clientes-grid">
-          <div class="loading">Carregando clientes...</div>
-        </div>
-      </section>
-
-      <!-- TABELA DE DADOS -->
+      <!-- TABELA DE CLIENTES -->
       <section class="table-section">
-        <h2>📋 Todos os Registros</h2>
-        <div id="loadingSpinner" class="spinner">Carregando dados...</div>
+        <h2>👥 Todos os Clientes</h2>
+        <div id="loadingSpinner" class="spinner">Carregando clientes...</div>
         <div id="errorMessage" class="error-message"></div>
         
         <table id="tabelaDados" class="table">
           <thead>
             <tr>
               <th>Cliente</th>
-              <th>Campanha</th>
-              <th>Tipo OOH</th>
               <th>Status</th>
-              <th>Cidade</th>
-              <th>Investimento</th>
-              <th>Impactos</th>
+              <th>Campanhas</th>
+              <th>Investimento Total</th>
               <th>Ações</th>
             </tr>
           </thead>

@@ -50,8 +50,6 @@ async function carregarDados() {
     }
     
     atualizarTabela();
-    atualizarEstatisticas();
-    atualizarClientesDestaque();
     loadingSpinner.style.display = 'none';
   } catch (error) {
     console.error('Erro ao carregar dados:', error);
@@ -65,117 +63,56 @@ async function carregarDados() {
 function atualizarTabela() {
   tabelaDadosBody.innerHTML = '';
   
-  if (dados.length === 0) {
-    tabelaDadosBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 30px;">Nenhum registro encontrado</td></tr>';
+  // Obter clientes únicos
+  const clientesUnicos = {};
+  dados.forEach((registro) => {
+    const cliente = registro['Cliente'] || '-';
+    if (!clientesUnicos[cliente]) {
+      clientesUnicos[cliente] = {
+        nome: cliente,
+        status: registro['Status Cliente'],
+        campanhas: 0,
+        investimento: 0,
+        registros: []
+      };
+    }
+    clientesUnicos[cliente].campanhas += 1;
+    
+    const investimento = parseFloat(
+      (registro['Investimento'] || 'R$ 0,00').replace(/[^\d,]/g, '').replace(',', '.')
+    );
+    clientesUnicos[cliente].investimento += isNaN(investimento) ? 0 : investimento;
+    clientesUnicos[cliente].registros.push(registro);
+  });
+  
+  const clientes = Object.values(clientesUnicos).sort((a, b) => 
+    a.nome.localeCompare(b.nome)
+  );
+  
+  if (clientes.length === 0) {
+    tabelaDadosBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 30px;">Nenhum cliente encontrado</td></tr>';
     return;
   }
   
-  dados.forEach((registro, index) => {
+  clientes.forEach((cliente, index) => {
     const linha = document.createElement('tr');
-    
-    const cliente = registro['Cliente'] || '-';
-    const campanha = registro['Campanha'] || '-';
-    const tipoOOH = registro['Tipo de OOH'] || '-';
-    const statusCliente = registro['Status Cliente'] || '-';
-    const cidade = (registro['Cidade'] || '').split(',')[0];
-    const investimento = registro['Investimento'] || 'R$ 0,00';
-    const impactos = formatarNumero(registro['Impactos Total'] || 0);
+    const investimentoFormatado = `R$ ${cliente.investimento.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     
     linha.innerHTML = `
-      <td><strong>${cliente}</strong></td>
-      <td>${campanha}</td>
-      <td>${tipoOOH}</td>
-      <td><span class="status ${statusCliente.toLowerCase()}">${statusCliente}</span></td>
-      <td>${cidade}</td>
-      <td>${investimento}</td>
-      <td>${impactos}</td>
+      <td><strong>${cliente.nome}</strong></td>
+      <td><span class="status ${cliente.status.toLowerCase()}">${cliente.status}</span></td>
+      <td>${cliente.campanhas}</td>
+      <td>${investimentoFormatado}</td>
       <td>
         <div class="table-actions">
-          <button class="btn-edit" onclick="abrirModalEditar(${index})">✏️ Editar</button>
-          <button class="btn-delete" onclick="confirmarDeletar(${index})">🗑️ Deletar</button>
+          <button class="btn-edit" onclick="abrirModalEditar('${cliente.nome}')">✏️ Editar</button>
+          <button class="btn-delete" onclick="confirmarDeletar('${cliente.nome}')">🗑️ Deletar</button>
         </div>
       </td>
     `;
     
     tabelaDadosBody.appendChild(linha);
   });
-}
-
-function atualizarEstatisticas() {
-  // Total de registros
-  document.getElementById('statTotal').textContent = dados.length;
-  
-  // Clientes únicos
-  const clientesUnicos = new Set(dados.map(d => d['Cliente'])).size;
-  document.getElementById('statClientes').textContent = clientesUnicos;
-  
-  // Campanhas ativas
-  const campanhasAtivas = dados.filter(d => d['Status Campanha'] === 'Ativa').length;
-  document.getElementById('statCampanhas').textContent = campanhasAtivas;
-  
-  // Investimento total
-  let investimentoTotal = 0;
-  dados.forEach(registro => {
-    const investimento = registro['Investimento'] || 'R$ 0,00';
-    const valor = parseFloat(investimento.replace(/[^\d,]/g, '').replace(',', '.'));
-    investimentoTotal += isNaN(valor) ? 0 : valor;
-  });
-  document.getElementById('statInvestimento').textContent = `R$ ${investimentoTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-}
-
-function atualizarClientesDestaque() {
-  const clientesContainer = document.getElementById('clientesContainer');
-  
-  // Agrupar por cliente
-  const clientesPorNome = {};
-  dados.forEach(registro => {
-    const cliente = registro['Cliente'] || 'Sem nome';
-    if (!clientesPorNome[cliente]) {
-      clientesPorNome[cliente] = {
-        nome: cliente,
-        status: registro['Status Cliente'],
-        campanhas: [],
-        investimento: 0,
-        registros: 0
-      };
-    }
-    clientesPorNome[cliente].campanhas.push(registro['Campanha']);
-    const investimento = parseFloat(
-      (registro['Investimento'] || 'R$ 0,00').replace(/[^\d,]/g, '').replace(',', '.')
-    );
-    clientesPorNome[cliente].investimento += isNaN(investimento) ? 0 : investimento;
-    clientesPorNome[cliente].registros += 1;
-  });
-  
-  // Converter para array e ordenar por investimento
-  const clientes = Object.values(clientesPorNome)
-    .sort((a, b) => b.investimento - a.investimento)
-    .slice(0, 6); // Mostrar top 6
-  
-  if (clientes.length === 0) {
-    clientesContainer.innerHTML = '<p class="loading">Nenhum cliente encontrado</p>';
-    return;
-  }
-  
-  clientesContainer.innerHTML = clientes.map(cliente => `
-    <div class="cliente-card">
-      <h3>${cliente.nome}</h3>
-      <div class="cliente-info">
-        <strong>Campanhas:</strong>
-        <span>${cliente.registros}</span>
-      </div>
-      <div class="cliente-info">
-        <strong>Investimento:</strong>
-        <span>R$ ${cliente.investimento.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-      </div>
-      <div class="cliente-info">
-        <strong>Status:</strong>
-        <span class="cliente-badge ${cliente.status === 'Ativo' ? 'badge-ativo' : 'badge-inativo'}">
-          ${cliente.status}
-        </span>
-      </div>
-    </div>
-  `).join('');
 }
 
 function filtrarTabela() {
@@ -201,17 +138,24 @@ function abrirModalNovoRegistro() {
   modal.classList.add('active');
 }
 
-function abrirModalEditar(index) {
-  registroEmEdicao = index;
-  const registro = dados[index];
+function abrirModalEditar(nomeCliente) {
+  registroEmEdicao = nomeCliente;
   
-  document.getElementById('modalTitulo').textContent = 'Editar Registro';
+  // Encontrar primeiro registro do cliente
+  const primeiroRegistro = dados.find(d => d['Cliente'] === nomeCliente);
   
-  // Preencher formulário
-  Object.keys(registro).forEach(chave => {
+  if (!primeiroRegistro) {
+    mostrarErro('Cliente não encontrado');
+    return;
+  }
+  
+  document.getElementById('modalTitulo').textContent = 'Editar Cliente: ' + nomeCliente;
+  
+  // Preencher formulário com dados do primeiro registro
+  Object.keys(primeiroRegistro).forEach(chave => {
     const elemento = document.querySelector(`[name="${chave}"]`);
     if (elemento) {
-      elemento.value = registro[chave];
+      elemento.value = primeiroRegistro[chave];
     }
   });
   
@@ -224,14 +168,11 @@ function fecharModal() {
   formulario.reset();
 }
 
-function confirmarDeletar(index) {
-  const registro = dados[index];
-  const cliente = registro['Cliente'] || 'Registro';
-  
+function confirmarDeletar(nomeCliente) {
   document.getElementById('msgConfirmacao').textContent = 
-    `Tem certeza que deseja deletar o registro de "${cliente}"? Esta ação não pode ser desfeita.`;
+    `Tem certeza que deseja deletar TODOS os registros do cliente "${nomeCliente}"? Esta ação não pode ser desfeita.`;
   
-  btnConfirmarDelete.onclick = () => deletarRegistro(index);
+  btnConfirmarDelete.onclick = () => deletarCliente(nomeCliente);
   modalConfirmacao.classList.add('active');
 }
 
@@ -309,6 +250,37 @@ async function deletarRegistro(index) {
   } catch (error) {
     console.error('Erro ao deletar:', error);
     mostrarErro(error.message || 'Erro ao deletar registro');
+  }
+}
+
+async function deletarCliente(nomeCliente) {
+  try {
+    // Encontrar todos os índices deste cliente
+    const indicesParaDeletar = dados
+      .map((d, idx) => d['Cliente'] === nomeCliente ? idx : -1)
+      .filter(idx => idx !== -1)
+      .sort((a, b) => b - a); // Ordenar em reverso para não quebrar índices
+    
+    // Deletar cada registro
+    for (const idx of indicesParaDeletar) {
+      const response = await fetch(`${API_BASE}/dados/${idx}`, {
+        method: 'DELETE'
+      });
+      
+      if (!response.ok) {
+        throw new Error('Erro ao deletar registro');
+      }
+    }
+    
+    // Atualizar dados locais
+    dados = dados.filter(d => d['Cliente'] !== nomeCliente);
+    
+    atualizarTabela();
+    modalConfirmacao.classList.remove('active');
+    mostrarSucesso(`Cliente "${nomeCliente}" deletado com sucesso!`);
+  } catch (error) {
+    console.error('Erro ao deletar cliente:', error);
+    mostrarErro(error.message || 'Erro ao deletar cliente');
   }
 }
 
