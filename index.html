@@ -61,14 +61,6 @@
             <label for="cliente">Cliente</label>
             <input type="text" id="cliente" name="Cliente" required>
           </div>
-          
-          <div class="form-group">
-            <label for="status">Status</label>
-            <select id="status" name="Status Cliente">
-              <option value="Ativo">Ativo</option>
-              <option value="Inativo">Inativo</option>
-            </select>
-          </div>
 
           <div class="form-group">
             <label for="campanha">Campanha</label>
@@ -222,7 +214,6 @@
         if (!clientesUnicos[cliente]) {
           clientesUnicos[cliente] = {
             nome: cliente,
-            status: registro['Status Cliente'],
             campanhas: 0,
             investimento: 0,
             registros: []
