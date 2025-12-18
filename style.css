@@ -762,7 +762,6 @@ main {
   border: 3px solid #f3f3f3;
   border-top: 3px solid #0052cc;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
   margin-left: 10px;
   vertical-align: middle;
 }
