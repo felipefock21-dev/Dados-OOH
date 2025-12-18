@@ -576,6 +576,9 @@
 
     function fecharModalCampanhas() {
       modalCampanhas.classList.remove('active');
+      // Garantir que o spinner de campanhas está oculto
+      campanhasSpinner.style.display = 'none';
+      tabelaCampanhas.style.display = 'none';
     }
 
     // ============================================
