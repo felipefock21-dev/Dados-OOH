@@ -582,8 +582,8 @@
           'Investimento': 'R$ ' + parseFloat(document.getElementById('inputInvestimento').value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
         };
 
-        // Enviar para a API
-        const response = await fetch(`${API_BASE}/nova-campanha`, {
+        // Enviar para a API (usando rota /api/dados que já existe)
+        const response = await fetch(`${API_BASE}/dados`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(novaLinha)
