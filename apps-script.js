@@ -1,87 +1,123 @@
 /**
  * Google Apps Script para gerenciar dados OOH via POST requests
- * Deploy: Deploy > Novo Deploy > Web App > Execute como Me > Qualquer pessoa
+ * Suporta: CREATE (append), UPDATE (update row), DELETE (clear row)
  */
 
-// ID da planilha (copiar do .env GOOGLE_SHEETS_ID)
 const SHEET_ID = '1H3qFr2if6MdNN4ZZnrMidTq9kNpOdb6OY8ICAS9Gsj4';
 const SHEET_NAME = 'Visão geral';
 
 /**
- * POST /doPost - Adicionar nova linha
+ * POST - Adicionar, atualizar ou deletar
  */
 function doPost(e) {
   try {
     Logger.log('=== doPost START ===');
-    Logger.log('Request type:', typeof e.postData);
-    Logger.log('Content type:', e.contentLength);
     
-    let data;
-    try {
+    let data = {};
+    if (e.postData && e.postData.contents) {
       data = JSON.parse(e.postData.contents);
-      Logger.log('Parsed data:', JSON.stringify(data));
-    } catch (parseErr) {
-      Logger.log('JSON parse error:', parseErr);
-      return ContentService.createTextOutput(JSON.stringify({ 
-        erro: 'Erro ao fazer parse do JSON: ' + parseErr.toString() 
-      }))
-      .setMimeType(ContentService.MimeType.JSON);
+      Logger.log('Dados recebidos:', JSON.stringify(data));
     }
     
     const ss = SpreadsheetApp.openById(SHEET_ID);
     const sheet = ss.getSheetByName(SHEET_NAME);
     
     if (!sheet) {
-      Logger.log('Sheet not found:', SHEET_NAME);
-      return ContentService.createTextOutput(JSON.stringify({ 
-        erro: `Sheet "${SHEET_NAME}" não encontrada` 
-      }))
-      .setMimeType(ContentService.MimeType.JSON);
+      throw new Error(`Sheet "${SHEET_NAME}" não encontrada`);
     }
     
-    // Pegar headers da primeira linha
+    // Pegar headers
     const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-    Logger.log('Headers:', JSON.stringify(headers));
+    Logger.log('Headers encontrados:', headers.length);
     
-    // Mapear dados para a ordem correta
-    const novaLinha = headers.map(header => {
-      const valor = data[header];
-      Logger.log(`Header "${header}" -> ${valor || ''}`);
-      return valor !== undefined ? String(valor) : '';
-    });
+    // Determinar ação
+    const action = data.action || 'create'; // 'create', 'update', 'delete'
+    Logger.log('Action:', action);
     
-    Logger.log('Nova linha:', JSON.stringify(novaLinha));
-    
-    // Adicionar linha
-    sheet.appendRow(novaLinha);
-    Logger.log('Row added successfully');
-    
-    return ContentService.createTextOutput(JSON.stringify({ 
-      sucesso: true, 
-      mensagem: 'Registro criado com sucesso'
-    }))
-    .setMimeType(ContentService.MimeType.JSON);
+    if (action === 'create') {
+      // Criar nova linha
+      const novaLinha = headers.map(header => data[header] || '');
+      sheet.appendRow(novaLinha);
+      Logger.log('✓ Nova linha adicionada');
       
+      return HtmlService.createHtmlOutput(JSON.stringify({
+        sucesso: true,
+        mensagem: 'Registro criado com sucesso'
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    else if (action === 'update') {
+      // Atualizar linha existente
+      const rowIndex = data.rowIndex;
+      Logger.log('Atualizando linha:', rowIndex);
+      
+      if (!rowIndex || rowIndex < 2) {
+        throw new Error('rowIndex inválido');
+      }
+      
+      const novaLinha = headers.map(header => data[header] || '');
+      const colunaFinal = headers.length;
+      
+      sheet.getRange(rowIndex, 1, 1, colunaFinal).setValues([novaLinha]);
+      Logger.log('✓ Linha atualizada');
+      
+      return HtmlService.createHtmlOutput(JSON.stringify({
+        sucesso: true,
+        mensagem: 'Registro atualizado com sucesso'
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    else if (action === 'delete') {
+      // Deletar linha (limpar conteúdo)
+      const rowIndex = data.rowIndex;
+      Logger.log('Deletando linha:', rowIndex);
+      
+      if (!rowIndex || rowIndex < 2) {
+        throw new Error('rowIndex inválido');
+      }
+      
+      const colunaFinal = headers.length;
+      sheet.getRange(rowIndex, 1, 1, colunaFinal).clearContent();
+      Logger.log('✓ Linha deletada');
+      
+      return HtmlService.createHtmlOutput(JSON.stringify({
+        sucesso: true,
+        mensagem: 'Registro deletado com sucesso'
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    else {
+      throw new Error('Action inválida: ' + action);
+    }
+    
   } catch (error) {
-    Logger.log('Error:', error.toString());
-    Logger.log('Stack:', error.stack);
-    return ContentService.createTextOutput(JSON.stringify({ 
-      erro: 'Erro ao criar registro: ' + error.toString() 
-    }))
-    .setMimeType(ContentService.MimeType.JSON);
+    Logger.log('❌ Erro:', error.toString());
+    return HtmlService.createHtmlOutput(JSON.stringify({
+      sucesso: false,
+      erro: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
   }
 }
 
 /**
- * GET /doGet - Health check
+ * GET - Health check
  */
 function doGet(e) {
-  Logger.log('=== doGet START ===');
-  return ContentService.createTextOutput(JSON.stringify({ 
-    status: 'OK', 
-    timestamp: new Date(),
-    sheetId: SHEET_ID,
-    sheetName: SHEET_NAME
-  }))
-  .setMimeType(ContentService.MimeType.JSON);
+  try {
+    const ss = SpreadsheetApp.openById(SHEET_ID);
+    const sheet = ss.getSheetByName(SHEET_NAME);
+    
+    return HtmlService.createHtmlOutput(JSON.stringify({
+      status: 'OK',
+      timestamp: new Date(),
+      sheetName: SHEET_NAME,
+      lastRow: sheet.getLastRow()
+    })).setMimeType(ContentService.MimeType.JSON);
+    
+  } catch (error) {
+    return HtmlService.createHtmlOutput(JSON.stringify({
+      status: 'ERROR',
+      erro: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
 }

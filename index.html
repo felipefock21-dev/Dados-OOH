@@ -572,6 +572,113 @@
     }
 
     // ============================================
+    // FUNÇÕES DE EDIÇÃO E DELEÇÃO
+    // ============================================
+
+    let campanhaEmEdicao = null;
+
+    function editarCampanha(index) {
+      campanhaEmEdicao = { index, original: dados[index] };
+      const campanha = dados[index];
+      
+      // Preencher formulário com dados da campanha
+      document.getElementById('inputCliente').value = campanha['Cliente'] || '';
+      document.getElementById('inputCampanha').value = campanha['Campanha'] || '';
+      document.getElementById('inputTipoOOH').value = campanha['Tipo de OOH'] || '';
+      document.getElementById('selectStatus').value = campanha['Status Campanha'] || 'Ativa';
+      document.getElementById('selectRegiao').value = campanha['Região'] || '';
+      
+      // Esperar região carregar e depois atualizar estado
+      setTimeout(() => {
+        document.getElementById('selectEstado').value = campanha['Estado'] || '';
+        
+        // Esperar estado carregar e depois atualizar cidade
+        setTimeout(() => {
+          document.getElementById('selectCidade').value = campanha['Cidade'] || '';
+        }, 300);
+      }, 300);
+      
+      document.getElementById('inputExibidora').value = campanha['Exibidora'] || '';
+      document.getElementById('selectMes').value = campanha['Mês de exibição'] || '';
+      document.getElementById('inputDataInicio').value = campanha['Início da campanha'] || '';
+      document.getElementById('inputDataFim').value = campanha['Término da campanha'] || '';
+      document.getElementById('inputImpactos').value = campanha['Impactos Total'] || '';
+      
+      // Remover "R$ " e parse do valor
+      const investimento = campanha['Investimento'] || '';
+      const valor = investimento.replace('R$ ', '').replace(/\./g, '').replace(',', '.');
+      document.getElementById('inputInvestimento').value = valor;
+      
+      // Mudar título do formulário e fechar modal de campanhas
+      document.getElementById('titulo-modal-nova-campanha').textContent = 'Editar Campanha';
+      const btnSubmit = document.querySelector('#formNovaCampanha button[type="submit"]');
+      btnSubmit.textContent = 'Atualizar Campanha';
+      
+      fecharModalCampanhas();
+      abrirModalNovaCampanha();
+    }
+
+    function deletarCampanha(index) {
+      if (!confirm('Tem certeza que deseja deletar esta campanha?')) {
+        return;
+      }
+      
+      const campanha = dados[index];
+      console.log('🗑️ Deletando campanha:', campanha['Campanha']);
+      
+      // Mostrar loading
+      const modalLoading = document.getElementById('modalLoading');
+      modalLoading.classList.add('active');
+      const loadingState = document.getElementById('loadingState');
+      const successState = document.getElementById('successState');
+      loadingState.classList.remove('hidden');
+      successState.classList.remove('active');
+      
+      document.getElementById('loadingTitle').textContent = 'Deletando campanha';
+      document.getElementById('loadingSubtitle').textContent = 'Um momento...';
+      
+      // Construir payload para deletar (enviamos toda a linha vazia ou com ID)
+      const linhaVazia = {};
+      const headers = Object.keys(campanha);
+      headers.forEach(h => {
+        linhaVazia[h] = '';
+      });
+      
+      // Enviar para Apps Script
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          action: 'delete',
+          rowIndex: index + 2, // +2 porque linha 1 é header, dados começam em 2
+          cliente: campanha['Cliente'],
+          campanha: campanha['Campanha']
+        })
+      })
+      .then(() => {
+        console.log('✓ Campanha deletada');
+        
+        setTimeout(() => {
+          loadingState.classList.add('hidden');
+          successState.classList.add('active');
+          document.getElementById('successTitle').textContent = 'Deletado!';
+        }, 500);
+        
+        setTimeout(() => {
+          modalLoading.classList.remove('active');
+          fecharModalCampanhas();
+          carregarDados();
+        }, 2000);
+      })
+      .catch(error => {
+        console.error('Erro ao deletar:', error);
+        modalLoading.classList.remove('active');
+        alert('Erro ao deletar campanha: ' + error.message);
+      });
+    }
+
+    // ============================================
     // MODAL NOVA CAMPANHA
     // ============================================
 
@@ -594,7 +701,8 @@
         }
 
         console.log('📝 Iniciando salvarNovaCampanha...');
-        console.log('🔗 APPS_SCRIPT_URL:', APPS_SCRIPT_URL);
+        const isEdicao = campanhaEmEdicao !== null;
+        console.log('Modo:', isEdicao ? 'EDIÇÃO' : 'CRIAÇÃO');
 
         const novaLinha = {
           'Cliente': document.getElementById('inputCliente').value,
@@ -614,6 +722,12 @@
           'Investimento': 'R$ ' + parseFloat(document.getElementById('inputInvestimento').value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
         };
 
+        // Se for edição, adicionar informações de atualização
+        if (isEdicao) {
+          novaLinha.action = 'update';
+          novaLinha.rowIndex = campanhaEmEdicao.index + 2; // +2 porque linha 1 é header
+        }
+
         console.log('📊 Dados a enviar:', JSON.stringify(novaLinha));
 
         // Mostrar modal de loading
@@ -623,6 +737,14 @@
         const successState = document.getElementById('successState');
         loadingState.classList.remove('hidden');
         successState.classList.remove('active');
+
+        if (isEdicao) {
+          document.getElementById('loadingTitle').textContent = 'Atualizando campanha';
+          document.getElementById('loadingSubtitle').textContent = 'Já já pronto...';
+        } else {
+          document.getElementById('loadingTitle').textContent = 'Estamos subindo sua campanha';
+          document.getElementById('loadingSubtitle').textContent = 'Só um minutinho...';
+        }
 
         // Enviar para Google Apps Script
         console.log('🚀 Enviando POST para Apps Script...');
@@ -634,34 +756,37 @@
         });
 
         console.log('✓ Resposta recebida');
-        console.log('Status:', response.status);
-        console.log('OK:', response.ok);
 
         // Mostrar sucesso
         setTimeout(() => {
           loadingState.classList.add('hidden');
           successState.classList.add('active');
+          document.getElementById('successTitle').textContent = isEdicao ? 'Atualizado!' : 'Tá feito!';
         }, 500);
 
-        // Fechar modal e limpar formulário após 2 segundos
+        // Fechar modal e limpar após 2 segundos
         setTimeout(() => {
           modalLoading.classList.remove('active');
-          alert('Campanha adicionada com sucesso!');
+          alert(isEdicao ? 'Campanha atualizada com sucesso!' : 'Campanha adicionada com sucesso!');
           fecharModalNovaCampanha();
+          
+          // Restaurar título e botão
+          document.getElementById('titulo-modal-nova-campanha').textContent = 'Adicionar nova campanha';
+          const btnSubmit = document.querySelector('#formNovaCampanha button[type="submit"]');
+          btnSubmit.textContent = 'Adicionar Campanha';
+          
           document.getElementById('formNovaCampanha').reset();
+          campanhaEmEdicao = null;
+          
           console.log('♻️ Recarregando dados em 2 segundos...');
           setTimeout(carregarDados, 2000);
         }, 2000);
         
       } catch (error) {
-        console.error('❌ Erro completo:', error);
-        console.error('Stack:', error.stack);
-        
-        // Fechar modal de loading em caso de erro
+        console.error('❌ Erro:', error);
         const modalLoading = document.getElementById('modalLoading');
         modalLoading.classList.remove('active');
-        
-        alert('Erro ao adicionar campanha: ' + error.message);
+        alert('Erro: ' + error.message);
       }
     }
 
