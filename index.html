@@ -9,20 +9,30 @@
 <body>
   <div class="container">
     <main>
-      <!-- SEÇÃO DE BUSCA E FILTROS -->
-      <section class="search-section">
-        <input 
-          type="text" 
-          id="searchInput" 
-          placeholder="🔍 Buscar cliente..."
-          class="search-input"
-        >
-        <button id="btnNovoRegistro" class="btn btn-primary">+ Novo Cliente</button>
+      <!-- SEÇÃO DE BOTÕES PRINCIPAIS -->
+      <section class="buttons-section">
+        <h1 class="page-title">Gerenciador de Dados OOH</h1>
+        <div class="buttons-container">
+          <button id="btnAtivo" class="btn btn-ativo">
+            <span class="btn-label">ATIVO</span>
+          </button>
+          <button id="btnInativo" class="btn btn-inativo">
+            <span class="btn-label">INATIVO</span>
+          </button>
+        </div>
       </section>
 
       <!-- TABELA DE CLIENTES -->
-      <section class="table-section">
-        <h2>👥 Todos os Clientes</h2>
+      <section class="table-section" id="tabelaSectionContainer" style="display: none;">
+        <div class="table-header">
+          <h2 id="tituloTabela">Clientes Ativos</h2>
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="🔍 Buscar cliente..."
+            class="search-input"
+          >
+        </div>
         <div id="loadingSpinner" class="spinner">Carregando clientes...</div>
         <div id="errorMessage" class="error-message"></div>
         
@@ -109,15 +119,19 @@
     
     let dados = [];
     let registroEmEdicao = null;
+    let statusFiltroAtual = null; // 'Ativo', 'Inativo', ou null
 
     const modal = document.getElementById('modalFormulario');
     const modalConfirmacao = document.getElementById('modalConfirmacao');
-    const btnNovoRegistro = document.getElementById('btnNovoRegistro');
+    const btnAtivo = document.getElementById('btnAtivo');
+    const btnInativo = document.getElementById('btnInativo');
     const btnCancelar = document.getElementById('btnCancelar');
     const btnCancelarDelete = document.getElementById('btnCancelarDelete');
     const btnConfirmarDelete = document.getElementById('btnConfirmarDelete');
     const formulario = document.getElementById('formularioDados');
     const tabelaDadosBody = document.getElementById('tabelaDadosBody');
+    const tabelaSectionContainer = document.getElementById('tabelaSectionContainer');
+    const tituloTabela = document.getElementById('tituloTabela');
     const searchInput = document.getElementById('searchInput');
     const loadingSpinner = document.getElementById('loadingSpinner');
     const errorMessage = document.getElementById('errorMessage');
@@ -126,11 +140,11 @@
     // EVENT LISTENERS
     // ============================================
     
-    btnNovoRegistro.addEventListener('click', abrirModalNovoRegistro);
+    btnAtivo.addEventListener('click', () => filtrarPorStatus('Ativo'));
+    btnInativo.addEventListener('click', () => filtrarPorStatus('Inativo'));
     btnCancelar.addEventListener('click', fecharModal);
     document.querySelector('.close').addEventListener('click', fecharModal);
     formulario.addEventListener('submit', salvarRegistro);
-    searchInput.addEventListener('input', filtrarTabela);
 
     window.addEventListener('load', carregarDados);
 
@@ -234,6 +248,87 @@
           linha.style.display = 'none';
         }
       });
+    }
+
+    function filtrarPorStatus(status) {
+      statusFiltroAtual = status;
+      
+      // Atualizar título
+      tituloTabela.textContent = status === 'Ativo' ? 'Clientes Ativos' : 'Clientes Inativos';
+      
+      // Atualizar estilos dos botões
+      if (status === 'Ativo') {
+        btnAtivo.classList.add('active');
+        btnInativo.classList.remove('active');
+      } else {
+        btnInativo.classList.add('active');
+        btnAtivo.classList.remove('active');
+      }
+      
+      // Mostrar tabela
+      tabelaSectionContainer.style.display = 'block';
+      
+      // Filtrar dados por status
+      const dadosFiltrados = dados.filter(registro => {
+        return registro['Status Cliente'] === status;
+      });
+      
+      // Atualizar tabela com dados filtrados
+      tabelaDadosBody.innerHTML = '';
+      
+      // Obter clientes únicos com status filtrado
+      const clientesUnicos = {};
+      dadosFiltrados.forEach((registro) => {
+        const cliente = registro['Cliente'] || '-';
+        if (!clientesUnicos[cliente]) {
+          clientesUnicos[cliente] = {
+            nome: cliente,
+            status: registro['Status Cliente'],
+            campanhas: 0,
+            investimento: 0,
+            registros: []
+          };
+        }
+        clientesUnicos[cliente].campanhas += 1;
+        
+        const investimento = parseFloat(
+          (registro['Investimento'] || 'R$ 0,00').replace(/[^\d,]/g, '').replace(',', '.')
+        );
+        clientesUnicos[cliente].investimento += isNaN(investimento) ? 0 : investimento;
+        clientesUnicos[cliente].registros.push(registro);
+      });
+      
+      const clientes = Object.values(clientesUnicos).sort((a, b) => 
+        a.nome.localeCompare(b.nome)
+      );
+      
+      if (clientes.length === 0) {
+        tabelaDadosBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 30px;">Nenhum cliente encontrado com status ' + status + '</td></tr>';
+        return;
+      }
+      
+      clientes.forEach((cliente, index) => {
+        const linha = document.createElement('tr');
+        const investimentoFormatado = `R$ ${cliente.investimento.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        
+        linha.innerHTML = `
+          <td><strong>${cliente.nome}</strong></td>
+          <td><span class="status ${cliente.status.toLowerCase()}">${cliente.status}</span></td>
+          <td>${cliente.campanhas}</td>
+          <td>${investimentoFormatado}</td>
+          <td>
+            <div class="table-actions">
+              <button class="btn-edit" onclick="abrirModalEditar('${cliente.nome}')">✏️ Editar</button>
+              <button class="btn-delete" onclick="confirmarDeletar('${cliente.nome}')">🗑️ Deletar</button>
+            </div>
+          </td>
+        `;
+        
+        tabelaDadosBody.appendChild(linha);
+      });
+      
+      // Atualizar listener de busca
+      searchInput.addEventListener('input', filtrarTabela);
     }
 
     // ============================================
