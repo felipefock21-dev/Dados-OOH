@@ -193,70 +193,15 @@
           dados = [];
         }
         
-        atualizarTabela();
         loadingSpinner.style.display = 'none';
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
         mostrarErro(`❌ Erro ao carregar dados: ${error.message}`);
         dados = [];
-        atualizarTabela();
         loadingSpinner.style.display = 'none';
       }
     }
 
-    function atualizarTabela() {
-      tabelaDadosBody.innerHTML = '';
-      
-      // Obter clientes únicos
-      const clientesUnicos = {};
-      dados.forEach((registro) => {
-        const cliente = registro['Cliente'] || '-';
-        if (!clientesUnicos[cliente]) {
-          clientesUnicos[cliente] = {
-            nome: cliente,
-            campanhas: 0,
-            investimento: 0,
-            registros: []
-          };
-        }
-        clientesUnicos[cliente].campanhas += 1;
-        
-        const investimento = parseFloat(
-          (registro['Investimento'] || 'R$ 0,00').replace(/[^\d,]/g, '').replace(',', '.')
-        );
-        clientesUnicos[cliente].investimento += isNaN(investimento) ? 0 : investimento;
-        clientesUnicos[cliente].registros.push(registro);
-      });
-      
-      const clientes = Object.values(clientesUnicos).sort((a, b) => 
-        a.nome.localeCompare(b.nome)
-      );
-      
-      if (clientes.length === 0) {
-        tabelaDadosBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 30px;">Nenhum cliente encontrado</td></tr>';
-        return;
-      }
-      
-      clientes.forEach((cliente, index) => {
-        const linha = document.createElement('tr');
-        const investimentoFormatado = `R$ ${cliente.investimento.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        
-        linha.innerHTML = `
-          <td><strong>${cliente.nome}</strong></td>
-          <td><span class="status ${cliente.status.toLowerCase()}">${cliente.status}</span></td>
-          <td>${cliente.campanhas}</td>
-          <td>${investimentoFormatado}</td>
-          <td>
-            <div class="table-actions">
-              <button class="btn-edit" onclick="abrirModalEditar('${cliente.nome}')">✏️ Editar</button>
-              <button class="btn-delete" onclick="confirmarDeletar('${cliente.nome}')">🗑️ Deletar</button>
-            </div>
-          </td>
-        `;
-        
-        tabelaDadosBody.appendChild(linha);
-      });
-    }
 
     function filtrarTabela() {
       const termo = searchInput.value.toLowerCase();
@@ -539,7 +484,6 @@
         
         dados = dados.filter(d => d['Cliente'] !== nomeCliente);
         
-        atualizarTabela();
         modalConfirmacao.classList.remove('active');
         mostrarSucesso(`Cliente "${nomeCliente}" deletado com sucesso!`);
       } catch (error) {
