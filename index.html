@@ -588,6 +588,8 @@
       campanhaEmEdicao = { index, original: dados[index] };
       const campanha = dados[index];
       
+      console.log('🔧 Editando campanha:', campanha);
+      
       // Preencher formulário com dados da campanha
       document.getElementById('inputCliente').value = campanha['Cliente'] || '';
       document.getElementById('inputCampanha').value = campanha['Campanha'] || '';
@@ -595,14 +597,34 @@
       document.getElementById('selectStatus').value = campanha['Status Campanha'] || 'Ativa';
       document.getElementById('selectRegiao').value = campanha['Região'] || '';
       
+      // Obter a sigla do estado (ele vem armazenado como sigla no Sheets)
+      const estadoSigla = (campanha['Estado'] || '').toUpperCase();
+      console.log('Estado (sigla):', estadoSigla);
+      
       // Esperar região carregar e depois atualizar estado
       setTimeout(() => {
-        document.getElementById('selectEstado').value = campanha['Estado'] || '';
+        // O value do select é "UF - Nome" mas procuramos pela sigla
+        const selectEstado = document.getElementById('selectEstado');
         
-        // Esperar estado carregar e depois atualizar cidade
+        // Encontrar a opção que tem essa sigla
+        for (let opt of selectEstado.options) {
+          if (opt.value.startsWith(estadoSigla + ' -')) {
+            selectEstado.value = opt.value;
+            break;
+          }
+        }
+        
+        console.log('Estado selecionado:', selectEstado.value);
+        
+        // Disparar evento de mudança para atualizar cidades
+        selectEstado.dispatchEvent(new Event('change'));
+        
+        // Esperar cidades carregarem e depois selecionar
         setTimeout(() => {
-          document.getElementById('selectCidade').value = campanha['Cidade'] || '';
-        }, 300);
+          const cidadeNome = campanha['Cidade'] || '';
+          document.getElementById('selectCidade').value = cidadeNome;
+          console.log('Cidade selecionada:', cidadeNome);
+        }, 500);
       }, 300);
       
       document.getElementById('inputExibidora').value = campanha['Exibidora'] || '';
@@ -612,9 +634,19 @@
       document.getElementById('inputImpactos').value = campanha['Impactos Total'] || '';
       
       // Remover "R$ " e parse do valor
-      const investimento = campanha['Investimento'] || '';
-      const valor = investimento.replace('R$ ', '').replace(/\./g, '').replace(',', '.');
+      const investimento = (campanha['Investimento'] || '').trim();
+      console.log('Investimento bruto:', investimento);
+      
+      let valor = '';
+      if (investimento) {
+        // Remove "R$ ", pontos (separador de milhares) e converte vírgula em ponto
+        valor = investimento
+          .replace(/R\$\s*/g, '')
+          .replace(/\./g, '')
+          .replace(',', '.');
+      }
       document.getElementById('inputInvestimento').value = valor;
+      console.log('Investimento parseado:', valor);
       
       // Mudar título do formulário e fechar modal de campanhas
       document.getElementById('titulo-modal-nova-campanha').textContent = 'Editar Campanha';
