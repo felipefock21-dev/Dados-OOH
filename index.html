@@ -603,52 +603,106 @@
     }
 
     // ============================================
-    // DADOS GEOGRÁFICOS DO BRASIL
+    // DADOS GEOGRÁFICOS - CARREGADOS VIA GEONAMES API
     // ============================================
-
-    const dadosBrasil = {
-      'Norte': ['Acre', 'Amapá', 'Amazonas', 'Pará', 'Rondônia', 'Roraima', 'Tocantins'],
-      'Nordeste': ['Alagoas', 'Bahia', 'Ceará', 'Maranhão', 'Paraíba', 'Pernambuco', 'Piauí', 'Rio Grande do Norte', 'Sergipe'],
-      'Centro-Oeste': ['Distrito Federal', 'Goiás', 'Mato Grosso', 'Mato Grosso do Sul'],
-      'Sudeste': ['Espírito Santo', 'Minas Gerais', 'Rio de Janeiro', 'São Paulo'],
-      'Sul': ['Paraná', 'Rio Grande do Sul', 'Santa Catarina']
-    };
-
-    // Cidades por estado (simplificado - incluindo principais)
-    const cidadesPorEstado = {
-      'São Paulo': ['São Paulo', 'Campinas', 'Santos', 'Sorocaba', 'Ribeirão Preto', 'Piracicaba'],
-      'Rio de Janeiro': ['Rio de Janeiro', 'Niterói', 'Duque de Caxias', 'São Gonçalo', 'Campos dos Goytacazes'],
-      'Minas Gerais': ['Belo Horizonte', 'Uberlândia', 'Contagem', 'Juiz de Fora', 'Betim'],
-      'Paraná': ['Curitiba', 'Londrina', 'Maringá', 'Ponta Grossa', 'Cascavel'],
-      'Rio Grande do Sul': ['Porto Alegre', 'Caxias do Sul', 'Pelotas', 'Santa Maria'],
-      'Bahia': ['Salvador', 'Feira de Santana', 'Vitória da Conquista', 'Ilhéus'],
-      'Ceará': ['Fortaleza', 'Caucaia', 'Juazeiro do Norte', 'Maracanaú'],
-      'Pernambuco': ['Recife', 'Jaboatão', 'Olinda', 'Caruaru'],
-      'Espírito Santo': ['Vitória', 'Vila Velha', 'Cariacica', 'Serra'],
-      'Goiás': ['Goiânia', 'Aparecida de Goiânia', 'Anápolis', 'Rio Verde'],
-      'Distrito Federal': ['Brasília'],
-      'Santa Catarina': ['Florianópolis', 'Joinville', 'Blumenau', 'Itajaí'],
-      'Maranhão': ['São Luís', 'Imperatriz'],
-      'Pará': ['Belém', 'Ananindeua'],
-      'Rondônia': ['Porto Velho'],
-      'Amazonas': ['Manaus'],
-      'Amapá': ['Macapá'],
-      'Roraima': ['Boa Vista'],
-      'Tocantins': ['Palmas'],
-      'Alagoas': ['Maceió'],
-      'Paraíba': ['João Pessoa'],
-      'Piauí': ['Teresina'],
-      'Rio Grande do Norte': ['Natal'],
-      'Sergipe': ['Aracaju'],
-      'Mato Grosso': ['Cuiabá'],
-      'Mato Grosso do Sul': ['Campo Grande']
-    };
-
     function inicializarSelects() {
       const selectRegiao = document.getElementById('selectRegiao');
       const selectEstado = document.getElementById('selectEstado');
 
-      // Preencher regiões
+      // Carrega estados do Brasil via Geonames
+      fetch('http://api.geonames.org/childrenJSON?geonameId=3469034&username=demo')
+        .then(res => res.json())
+        .then(data => {
+          // Agrupar por região (usando a informação de adminCode1)
+          const estadosPorRegiao = {
+            'Norte': [],
+            'Nordeste': [],
+            'Centro-Oeste': [],
+            'Sudeste': [],
+            'Sul': []
+          };
+
+          // Mapa de estados para regiões
+          const estadoRegiao = {
+            'Acre': 'Norte',
+            'Amapá': 'Norte',
+            'Amazonas': 'Norte',
+            'Pará': 'Norte',
+            'Rondônia': 'Norte',
+            'Roraima': 'Norte',
+            'Tocantins': 'Norte',
+            'Alagoas': 'Nordeste',
+            'Bahia': 'Nordeste',
+            'Ceará': 'Nordeste',
+            'Maranhão': 'Nordeste',
+            'Paraíba': 'Nordeste',
+            'Pernambuco': 'Nordeste',
+            'Piauí': 'Nordeste',
+            'Rio Grande do Norte': 'Nordeste',
+            'Sergipe': 'Nordeste',
+            'Distrito Federal': 'Centro-Oeste',
+            'Goiás': 'Centro-Oeste',
+            'Mato Grosso': 'Centro-Oeste',
+            'Mato Grosso do Sul': 'Centro-Oeste',
+            'Espírito Santo': 'Sudeste',
+            'Minas Gerais': 'Sudeste',
+            'Rio de Janeiro': 'Sudeste',
+            'São Paulo': 'Sudeste',
+            'Paraná': 'Sul',
+            'Rio Grande do Sul': 'Sul',
+            'Santa Catarina': 'Sul'
+          };
+
+          // Preencher regiões
+          Object.keys(estadosPorRegiao).forEach(regiao => {
+            const option = document.createElement('option');
+            option.value = regiao;
+            option.textContent = regiao;
+            selectRegiao.appendChild(option);
+          });
+
+          // Armazenar estados por região
+          window.estadosPorRegiao = estadosPorRegiao;
+          data.geonames.forEach(state => {
+            const nomeFull = state.name;
+            const regiao = estadoRegiao[nomeFull];
+            if (regiao && estadosPorRegiao[regiao]) {
+              estadosPorRegiao[regiao].push(nomeFull);
+            }
+          });
+
+          // Listener para atualizar estados
+          selectRegiao.addEventListener('change', function() {
+            selectEstado.innerHTML = '<option value="">Selecione...</option>';
+            const estadosSelecionados = window.estadosPorRegiao[this.value] || [];
+            estadosSelecionados.sort().forEach(estado => {
+              const option = document.createElement('option');
+              option.value = estado;
+              option.textContent = estado;
+              selectEstado.appendChild(option);
+            });
+          });
+        })
+        .catch(err => {
+          console.error('Erro ao carregar estados:', err);
+          // Fallback para dados hardcoded se API falhar
+          carregarEstadosLocal();
+        });
+    }
+
+    function carregarEstadosLocal() {
+      // Fallback para dados locais se API falhar
+      const selectRegiao = document.getElementById('selectRegiao');
+      const selectEstado = document.getElementById('selectEstado');
+      
+      const dadosBrasil = {
+        'Norte': ['Acre', 'Amapá', 'Amazonas', 'Pará', 'Rondônia', 'Roraima', 'Tocantins'],
+        'Nordeste': ['Alagoas', 'Bahia', 'Ceará', 'Maranhão', 'Paraíba', 'Pernambuco', 'Piauí', 'Rio Grande do Norte', 'Sergipe'],
+        'Centro-Oeste': ['Distrito Federal', 'Goiás', 'Mato Grosso', 'Mato Grosso do Sul'],
+        'Sudeste': ['Espírito Santo', 'Minas Gerais', 'Rio de Janeiro', 'São Paulo'],
+        'Sul': ['Paraná', 'Rio Grande do Sul', 'Santa Catarina']
+      };
+
       Object.keys(dadosBrasil).forEach(regiao => {
         const option = document.createElement('option');
         option.value = regiao;
@@ -656,7 +710,6 @@
         selectRegiao.appendChild(option);
       });
 
-      // Preencher estados ao selecionar região
       selectRegiao.addEventListener('change', function() {
         selectEstado.innerHTML = '<option value="">Selecione...</option>';
         const estadosSelecionados = dadosBrasil[this.value] || [];
@@ -673,16 +726,38 @@
       const selectEstado = document.getElementById('selectEstado').value;
       const selectCidade = document.getElementById('selectCidade');
 
-      selectCidade.innerHTML = '<option value="">Selecione...</option>';
+      selectCidade.innerHTML = '<option value=""><span style="font-style: italic;">Carregando cidades...</span></option>';
 
-      if (selectEstado && cidadesPorEstado[selectEstado]) {
-        cidadesPorEstado[selectEstado].forEach(cidade => {
-          const option = document.createElement('option');
-          option.value = cidade;
-          option.textContent = cidade;
-          selectCidade.appendChild(option);
-        });
+      if (!selectEstado) {
+        selectCidade.innerHTML = '<option value="">Selecione um estado primeiro</option>';
+        return;
       }
+
+      // Usar Geonames para buscar cidades
+      fetch(`http://api.geonames.org/searchJSON?country=BR&adminCode1=${selectEstado}&featureClass=P&username=demo&maxRows=1000`)
+        .then(res => res.json())
+        .then(data => {
+          selectCidade.innerHTML = '<option value="">Selecione...</option>';
+          
+          // Pegar cidades únicas e ordenar
+          const cidades = [...new Set(data.geonames.map(city => city.name))].sort();
+          
+          if (cidades.length === 0) {
+            selectCidade.innerHTML = '<option value="">Nenhuma cidade encontrada</option>';
+            return;
+          }
+          
+          cidades.forEach(cidade => {
+            const option = document.createElement('option');
+            option.value = cidade;
+            option.textContent = cidade;
+            selectCidade.appendChild(option);
+          });
+        })
+        .catch(err => {
+          console.error('Erro ao carregar cidades:', err);
+          selectCidade.innerHTML = '<option value="">Erro ao carregar cidades</option>';
+        });
     }
 
     function editarCampanha(index) {
