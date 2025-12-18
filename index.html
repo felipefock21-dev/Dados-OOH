@@ -767,7 +767,13 @@
         }, 500);
         
         setTimeout(() => {
+          // Remover classe active do modal para ocultá-lo completamente
           modalLoading.classList.remove('active');
+          
+          // Resetar estados visuais do modal
+          loadingState.classList.remove('hidden');
+          successState.classList.remove('active');
+          
           fecharModalCampanhas();
           carregarDados();
         }, 2000);
