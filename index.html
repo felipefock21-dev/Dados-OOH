@@ -253,11 +253,19 @@
     // ============================================
     // CONFIGURAÇÃO DA API
     // ============================================
+    // CONFIGURAÇÃO DE APIs
+    // ============================================
     
-    // Usar Worker direto (secrets configurados no Cloudflare)
+    // Worker API para leitura (GET)
     const API_BASE = 'https://dados-ooh-worker.kaike-458.workers.dev/api';
     
+    // Google Apps Script para escrita (POST)
+    // ⚠️ IMPORTANTE: Atualize esta URL com a do seu Apps Script publicado
+    // Instrução: https://script.google.com > Novo Projeto > Cole apps-script.js > Deploy > Web App
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/usercontent'; // ← ATUALIZE AQUI
+    
     console.log('🚀 API_BASE:', API_BASE);
+    console.log('📝 APPS_SCRIPT_URL:', APPS_SCRIPT_URL);
     
     // ============================================
     // ESTADO E DOM
@@ -564,9 +572,14 @@
       e.preventDefault();
       
       try {
+        // Validar se Apps Script URL foi configurado
+        if (APPS_SCRIPT_URL.includes('YOUR_DEPLOYMENT_ID')) {
+          throw new Error('Apps Script URL não foi configurado. Verifique o README.md para instruções.');
+        }
+
         const novaLinha = {
           'Cliente': document.getElementById('inputCliente').value,
-          'Status Cliente': '', // Será determinado pelo sistema
+          'Status Cliente': '',
           'Campanha': document.getElementById('inputCampanha').value,
           'Tipo de OOH': document.getElementById('inputTipoOOH').value,
           'Status Campanha': document.getElementById('selectStatus').value,
@@ -582,20 +595,27 @@
           'Investimento': 'R$ ' + parseFloat(document.getElementById('inputInvestimento').value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
         };
 
-        // Enviar para a API (usando rota /api/dados que já existe)
-        const response = await fetch(`${API_BASE}/dados`, {
+        // Enviar para Google Apps Script
+        const response = await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(novaLinha)
         });
 
-        if (!response.ok) {
-          throw new Error('Erro ao adicionar campanha');
+        const result = await response.json();
+
+        if (!response.ok || result.erro) {
+          throw new Error(result.erro || 'Erro ao adicionar campanha');
         }
 
         alert('Campanha adicionada com sucesso!');
         fecharModalNovaCampanha();
-        carregarDados();
+        
+        // Limpar formulário
+        document.getElementById('formNovaCampanha').reset();
+        
+        // Recarregar dados
+        setTimeout(carregarDados, 1000);
       } catch (error) {
         console.error('Erro:', error);
         alert('Erro ao adicionar campanha: ' + error.message);

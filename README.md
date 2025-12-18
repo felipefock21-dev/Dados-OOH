@@ -7,47 +7,66 @@ Sistema de gerenciamento de dados Out-of-Home integrado com Google Sheets via Cl
 ✅ **Sistema 100% funcional e deployado**
 
 - **Worker API**: https://dados-ooh-worker.kaike-458.workers.dev/api
-- **Frontend**: Roda localmente ou em Cloudflare Pages
+- **Frontend**: https://dados-ooh.pages.dev
+- **Apps Script**: Necessário para criar novos registros (veja setup abaixo)
 
 ## 📁 Estrutura Funcional
 
 ```
 projeto/
-├── src/index.js          ← Worker do Cloudflare (API REST)
+├── src/index.js          ← Worker do Cloudflare (API REST para leitura)
+├── apps-script.js        ← Google Apps Script (para criar registros)
 ├── index.html            ← Frontend (HTML + CSS + JS inline)
 ├── style.css             ← Estilos
 ├── wrangler.toml         ← Configuração Cloudflare
 └── .env                  ← Secrets (não versionado)
 ```
 
-## ⚙️ Como Usar
+## ⚙️ Setup Inicial
 
-### Localmente
+### 1. Google Apps Script (para POST/CREATE)
+
+O Google Sheets API requer OAuth2 para escrita. Usamos Google Apps Script como webhook:
+
+1. Abra https://script.google.com
+2. Crie um novo projeto
+3. Cole o conteúdo de `apps-script.js`
+4. Atualize `SHEET_ID` com o ID da sua planilha
+5. **Deploy > Novo Deploy > Web App**
+   - Execute como: Seu email
+   - Acesso: Qualquer pessoa (ou especifique)
+6. Copie a URL do Apps Script publicado
+7. No `index.html`, atualize a variável `APPS_SCRIPT_URL` com a URL publicada
+
+### 2. Cloudflare Worker (para GET/READ)
 
 ```bash
-# Servir frontend
-python -m http.server 8000
-
-# Abrir em http://localhost:8000/index.html
-```
-
-### Deploy no Cloudflare
-
-```bash
-# Fazer alterações no Worker
-# Editar src/index.js
+# Login
+wrangler login
 
 # Deploy
-wrangler deploy --env=""
+wrangler deploy
+```
+
+### 3. Frontend
+
+```bash
+# Servir localmente
+python -m http.server 8000
+
+# Ou deploy no Cloudflare Pages
+# (configurado via GitHub Actions)
 ```
 
 ## 📊 Funcionalidades
 
-- ✅ Listar clientes com dados agregados
-- ✅ Criar novos registros
-- ✅ Editar clientes
-- ✅ Deletar registros
-- ✅ Buscar/Filtrar por nome
+- ✅ Listar clientes com dados agregados (via Worker API - GET)
+- ✅ Criar novos registros (via Google Apps Script - POST)
+- ✅ Editar clientes (via Apps Script)
+- ✅ Deletar registros (via Apps Script)
+- ✅ Buscar/Filtrar por status
+- ✅ Regiões/Estados/Cidades dinâmicas (API IBGE)
+
 - ✅ Sincronização em tempo real com Google Sheets
 
 ## 🔑 Configuração
