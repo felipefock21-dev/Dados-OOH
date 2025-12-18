@@ -624,8 +624,22 @@
       console.log('Região selecionada:', selectRegiao.value);
       selectRegiao.dispatchEvent(new Event('change'));
       
-      // Obter o nome do estado (ele vem armazenado como nome completo no Sheets)
-      const estadoNome = (campanha['Estado'] || '').trim();
+      // Obter o nome do estado (pode vir como sigla ou nome completo da planilha)
+      let estadoValue = (campanha['Estado'] || '').trim();
+      console.log('Estado (bruto da planilha):', estadoValue);
+      
+      // Se for uma sigla (2 caracteres), converter para nome completo
+      let estadoNome = estadoValue;
+      if (estadoValue.length === 2) {
+        // Procurar o nome completo pela sigla
+        for (const [nome, dados] of Object.entries(window.estadosIBGE || {})) {
+          if (dados.sigla === estadoValue.toUpperCase()) {
+            estadoNome = nome;
+            break;
+          }
+        }
+        console.log('Convertido de sigla para nome:', estadoValue, '->', estadoNome);
+      }
       console.log('Estado (nome completo):', estadoNome);
       
       // Esperar região carregar e depois atualizar estado
@@ -657,6 +671,9 @@
         setTimeout(() => {
           const cidadeNome = campanha['Cidade'] || '';
           const selectCidade = document.getElementById('selectCidade');
+          
+          console.log('Tentando selecionar cidade:', cidadeNome);
+          console.log('Opções de cidades:', Array.from(selectCidade.options).map(o => o.value));
           
           // Procurar por uma opção que coincida com o nome da cidade (case-insensitive)
           const opcaoCidadeEncontrada = Array.from(selectCidade.options).find(opt => 
