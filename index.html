@@ -775,6 +775,11 @@
         const dataInicio = document.getElementById('inputDataInicio').value;
         const dataFim = document.getElementById('inputDataFim').value;
 
+        console.log('Data Início (bruta):', dataInicio);
+        console.log('Data Fim (bruta):', dataFim);
+        console.log('Data Início (formatada):', formatarDataParaPlanilha(dataInicio));
+        console.log('Data Fim (formatada):', formatarDataParaPlanilha(dataFim));
+
         const novaLinha = {
           'Cliente': document.getElementById('inputCliente').value,
           'Status Cliente': '',
