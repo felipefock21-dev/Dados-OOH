@@ -710,6 +710,7 @@
         console.log('📝 Iniciando salvarNovaCampanha...');
         const isEdicao = campanhaEmEdicao !== null;
         console.log('Modo:', isEdicao ? 'EDIÇÃO' : 'CRIAÇÃO');
+        console.log('campanhaEmEdicao:', campanhaEmEdicao);
 
         const novaLinha = {
           'Cliente': document.getElementById('inputCliente').value,
@@ -733,6 +734,7 @@
         if (isEdicao) {
           novaLinha.action = 'update';
           novaLinha.rowIndex = campanhaEmEdicao.index + 2; // +2 porque linha 1 é header
+          console.log('Editando - rowIndex:', novaLinha.rowIndex, 'index original:', campanhaEmEdicao.index);
         }
 
         console.log('📊 Dados a enviar:', JSON.stringify(novaLinha));
@@ -755,6 +757,7 @@
 
         // Enviar para Google Apps Script
         console.log('🚀 Enviando POST para Apps Script...');
+        console.log('URL:', APPS_SCRIPT_URL);
         const response = await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
           mode: 'no-cors',
