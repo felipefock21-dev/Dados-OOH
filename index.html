@@ -428,9 +428,14 @@
       tituloModalCampanhas.textContent = `Campanhas de ${nomeCliente} (${status})`;
       modalCampanhas.classList.add('active');
       
-      // Filtrar campanhas deste cliente com o status correspondente
+      // Determinar o status da campanha correspondente
+      const statusCampanha = status === 'Ativo' ? 'Ativa' : 'Inativa';
+      
+      // Filtrar campanhas deste cliente com o status correspondente (tanto do cliente quanto da campanha)
       const campanhasDoCliente = dados.filter(registro => {
-        return registro['Cliente'] === nomeCliente && registro['Status Cliente'] === status;
+        return registro['Cliente'] === nomeCliente && 
+               registro['Status Cliente'] === status &&
+               registro['Status Campanha'] === statusCampanha;
       });
       
       // Renderizar tabela de campanhas
