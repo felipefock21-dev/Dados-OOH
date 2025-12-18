@@ -709,8 +709,9 @@
             const estadosSelecionados = window.estadosPorRegiao[this.value] || [];
             estadosSelecionados.sort().forEach(estado => {
               const option = document.createElement('option');
-              option.value = estado;
-              option.textContent = estado;
+              option.value = estado; // Guardar nome completo para atualizarCidades funcionar
+              const uf = window.estadoCodigo[estado]; // Buscar UF para exibição
+              option.textContent = `${uf} - ${estado}`; // Exibir como "SP - São Paulo"
               selectEstado.appendChild(option);
             });
           });
@@ -735,6 +736,39 @@
         'Sul': ['Paraná', 'Rio Grande do Sul', 'Santa Catarina']
       };
 
+      // Mapa de estados para UF (fallback)
+      const estadoCodigo = {
+        'Acre': 'AC',
+        'Alagoas': 'AL',
+        'Amapá': 'AP',
+        'Amazonas': 'AM',
+        'Bahia': 'BA',
+        'Ceará': 'CE',
+        'Distrito Federal': 'DF',
+        'Espírito Santo': 'ES',
+        'Goiás': 'GO',
+        'Maranhão': 'MA',
+        'Mato Grosso': 'MT',
+        'Mato Grosso do Sul': 'MS',
+        'Minas Gerais': 'MG',
+        'Pará': 'PA',
+        'Paraíba': 'PB',
+        'Paraná': 'PR',
+        'Pernambuco': 'PE',
+        'Piauí': 'PI',
+        'Rio de Janeiro': 'RJ',
+        'Rio Grande do Norte': 'RN',
+        'Rio Grande do Sul': 'RS',
+        'Rondônia': 'RO',
+        'Roraima': 'RR',
+        'Santa Catarina': 'SC',
+        'São Paulo': 'SP',
+        'Sergipe': 'SE',
+        'Tocantins': 'TO'
+      };
+
+      window.estadoCodigo = estadoCodigo; // Armazenar para atualizarCidades usar
+
       Object.keys(dadosBrasil).forEach(regiao => {
         const option = document.createElement('option');
         option.value = regiao;
@@ -747,8 +781,9 @@
         const estadosSelecionados = dadosBrasil[this.value] || [];
         estadosSelecionados.forEach(estado => {
           const option = document.createElement('option');
-          option.value = estado;
-          option.textContent = estado;
+          option.value = estado; // Guardar nome completo
+          const uf = estadoCodigo[estado]; // Buscar UF
+          option.textContent = `${uf} - ${estado}`; // Exibir como "SP - São Paulo"
           selectEstado.appendChild(option);
         });
       });
