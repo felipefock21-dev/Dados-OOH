@@ -912,7 +912,10 @@
           successState.classList.remove('active');
           
           alert(isEdicao ? 'Campanha atualizada com sucesso!' : 'Campanha adicionada com sucesso!');
+          
+          // Fechar modais
           fecharModalNovaCampanha();
+          fecharModalCampanhas();
           
           // Restaurar título e botão
           document.getElementById('titulo-modal-nova-campanha').textContent = 'Adicionar nova campanha';
