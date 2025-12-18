@@ -127,6 +127,126 @@
         </div>
       </div>
     </div>
+
+    <!-- MODAL DE NOVA CAMPANHA -->
+    <div id="modalNovaCampanha" class="modal">
+      <div class="modal-content modal-content-form">
+        <span class="close" id="closeNovaCampanha">&times;</span>
+        <h2>Adicionar Nova Campanha</h2>
+        
+        <form id="formNovaCampanha" class="form-nova-campanha">
+          <!-- Linha 1: Cliente, Campanha -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="inputCliente">Cliente *</label>
+              <input type="text" id="inputCliente" placeholder="Nome do cliente" required>
+            </div>
+            <div class="form-group">
+              <label for="inputCampanha">Campanha *</label>
+              <input type="text" id="inputCampanha" placeholder="Nome da campanha" required>
+            </div>
+          </div>
+
+          <!-- Linha 2: Tipo OOH, Status -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="inputTipoOOH">Tipo de OOH *</label>
+              <input type="text" id="inputTipoOOH" placeholder="Ex: Outdoor, Painel" required>
+            </div>
+            <div class="form-group">
+              <label for="selectStatus">Status Campanha *</label>
+              <select id="selectStatus" required>
+                <option value="">Selecione...</option>
+                <option value="Ativa">Ativa</option>
+                <option value="Inativa">Inativa</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Linha 3: Região, Estado -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="selectRegiao">Região *</label>
+              <select id="selectRegiao" required>
+                <option value="">Selecione...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="selectEstado">Estado *</label>
+              <select id="selectEstado" required>
+                <option value="">Selecione...</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Linha 4: Cidade -->
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="selectCidade">Cidade *</label>
+              <select id="selectCidade" required>
+                <option value="">Selecione um estado primeiro</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Linha 5: Exibidora, Mês -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="inputExibidora">Exibidora *</label>
+              <input type="text" id="inputExibidora" placeholder="Nome da exibidora" required>
+            </div>
+            <div class="form-group">
+              <label for="selectMes">Mês de Exibição *</label>
+              <select id="selectMes" required>
+                <option value="">Selecione...</option>
+                <option value="Janeiro">Janeiro</option>
+                <option value="Fevereiro">Fevereiro</option>
+                <option value="Março">Março</option>
+                <option value="Abril">Abril</option>
+                <option value="Maio">Maio</option>
+                <option value="Junho">Junho</option>
+                <option value="Julho">Julho</option>
+                <option value="Agosto">Agosto</option>
+                <option value="Setembro">Setembro</option>
+                <option value="Outubro">Outubro</option>
+                <option value="Novembro">Novembro</option>
+                <option value="Dezembro">Dezembro</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Linha 6: Datas -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="inputDataInicio">Início da Campanha *</label>
+              <input type="date" id="inputDataInicio" required>
+            </div>
+            <div class="form-group">
+              <label for="inputDataFim">Término da Campanha *</label>
+              <input type="date" id="inputDataFim" required>
+            </div>
+          </div>
+
+          <!-- Linha 7: Impactos e Investimento -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="inputImpactos">Impactos Total *</label>
+              <input type="number" id="inputImpactos" placeholder="0" min="0" required>
+            </div>
+            <div class="form-group">
+              <label for="inputInvestimento">Investimento (R$) *</label>
+              <input type="number" id="inputInvestimento" placeholder="0,00" step="0.01" min="0" required>
+            </div>
+          </div>
+
+          <!-- Botões -->
+          <div class="form-actions">
+            <button type="submit" class="btn-submit">Adicionar Campanha</button>
+            <button type="button" class="btn-cancel" id="btnCancelNovaCampanha">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -176,7 +296,20 @@
     btnCancelar.addEventListener('click', fecharModal);
     document.querySelector('.close').addEventListener('click', fecharModal);
     document.getElementById('closeCampanhas').addEventListener('click', fecharModalCampanhas);
+    document.getElementById('closeNovaCampanha').addEventListener('click', fecharModalNovaCampanha);
+    document.getElementById('btnAdicionarCampanha').addEventListener('click', abrirModalNovaCampanha);
+    document.getElementById('btnCancelNovaCampanha').addEventListener('click', fecharModalNovaCampanha);
+    document.getElementById('selectEstado').addEventListener('change', atualizarCidades);
+    document.getElementById('formNovaCampanha').addEventListener('submit', salvarNovaCampanha);
     formulario.addEventListener('submit', salvarRegistro);
+
+    // Inicializar dados na página
+    carregarDados();
+    inicializarSelects();
+
+    // ============================================
+    // FILTROS E BUSCA
+    // ============================================
 
     window.addEventListener('load', carregarDados);
 
@@ -411,6 +544,146 @@
 
     function fecharModalCampanhas() {
       modalCampanhas.classList.remove('active');
+    }
+
+    // ============================================
+    // MODAL NOVA CAMPANHA
+    // ============================================
+
+    const modalNovaCampanha = document.getElementById('modalNovaCampanha');
+
+    function abrirModalNovaCampanha() {
+      modalNovaCampanha.classList.add('active');
+    }
+
+    function fecharModalNovaCampanha() {
+      modalNovaCampanha.classList.remove('active');
+      document.getElementById('formNovaCampanha').reset();
+    }
+
+    async function salvarNovaCampanha(e) {
+      e.preventDefault();
+      
+      try {
+        const novaLinha = {
+          'Cliente': document.getElementById('inputCliente').value,
+          'Status Cliente': '', // Será determinado pelo sistema
+          'Campanha': document.getElementById('inputCampanha').value,
+          'Tipo de OOH': document.getElementById('inputTipoOOH').value,
+          'Status Campanha': document.getElementById('selectStatus').value,
+          'Região': document.getElementById('selectRegiao').value,
+          'Estado': document.getElementById('selectEstado').value,
+          'Cidade': document.getElementById('selectCidade').value,
+          'Exibidora': document.getElementById('inputExibidora').value,
+          'URL logo exibidora': '',
+          'Mês de exibição': document.getElementById('selectMes').value,
+          'Início da campanha': document.getElementById('inputDataInicio').value,
+          'Término da campanha': document.getElementById('inputDataFim').value,
+          'Impactos Total': document.getElementById('inputImpactos').value,
+          'Investimento': 'R$ ' + parseFloat(document.getElementById('inputInvestimento').value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        };
+
+        // Enviar para a API
+        const response = await fetch(`${API_BASE}/nova-campanha`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(novaLinha)
+        });
+
+        if (!response.ok) {
+          throw new Error('Erro ao adicionar campanha');
+        }
+
+        alert('Campanha adicionada com sucesso!');
+        fecharModalNovaCampanha();
+        carregarDados();
+      } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao adicionar campanha: ' + error.message);
+      }
+    }
+
+    // ============================================
+    // DADOS GEOGRÁFICOS DO BRASIL
+    // ============================================
+
+    const dadosBrasil = {
+      'Norte': ['Acre', 'Amapá', 'Amazonas', 'Pará', 'Rondônia', 'Roraima', 'Tocantins'],
+      'Nordeste': ['Alagoas', 'Bahia', 'Ceará', 'Maranhão', 'Paraíba', 'Pernambuco', 'Piauí', 'Rio Grande do Norte', 'Sergipe'],
+      'Centro-Oeste': ['Distrito Federal', 'Goiás', 'Mato Grosso', 'Mato Grosso do Sul'],
+      'Sudeste': ['Espírito Santo', 'Minas Gerais', 'Rio de Janeiro', 'São Paulo'],
+      'Sul': ['Paraná', 'Rio Grande do Sul', 'Santa Catarina']
+    };
+
+    // Cidades por estado (simplificado - incluindo principais)
+    const cidadesPorEstado = {
+      'São Paulo': ['São Paulo', 'Campinas', 'Santos', 'Sorocaba', 'Ribeirão Preto', 'Piracicaba'],
+      'Rio de Janeiro': ['Rio de Janeiro', 'Niterói', 'Duque de Caxias', 'São Gonçalo', 'Campos dos Goytacazes'],
+      'Minas Gerais': ['Belo Horizonte', 'Uberlândia', 'Contagem', 'Juiz de Fora', 'Betim'],
+      'Paraná': ['Curitiba', 'Londrina', 'Maringá', 'Ponta Grossa', 'Cascavel'],
+      'Rio Grande do Sul': ['Porto Alegre', 'Caxias do Sul', 'Pelotas', 'Santa Maria'],
+      'Bahia': ['Salvador', 'Feira de Santana', 'Vitória da Conquista', 'Ilhéus'],
+      'Ceará': ['Fortaleza', 'Caucaia', 'Juazeiro do Norte', 'Maracanaú'],
+      'Pernambuco': ['Recife', 'Jaboatão', 'Olinda', 'Caruaru'],
+      'Espírito Santo': ['Vitória', 'Vila Velha', 'Cariacica', 'Serra'],
+      'Goiás': ['Goiânia', 'Aparecida de Goiânia', 'Anápolis', 'Rio Verde'],
+      'Distrito Federal': ['Brasília'],
+      'Santa Catarina': ['Florianópolis', 'Joinville', 'Blumenau', 'Itajaí'],
+      'Maranhão': ['São Luís', 'Imperatriz'],
+      'Pará': ['Belém', 'Ananindeua'],
+      'Rondônia': ['Porto Velho'],
+      'Amazonas': ['Manaus'],
+      'Amapá': ['Macapá'],
+      'Roraima': ['Boa Vista'],
+      'Tocantins': ['Palmas'],
+      'Alagoas': ['Maceió'],
+      'Paraíba': ['João Pessoa'],
+      'Piauí': ['Teresina'],
+      'Rio Grande do Norte': ['Natal'],
+      'Sergipe': ['Aracaju'],
+      'Mato Grosso': ['Cuiabá'],
+      'Mato Grosso do Sul': ['Campo Grande']
+    };
+
+    function inicializarSelects() {
+      const selectRegiao = document.getElementById('selectRegiao');
+      const selectEstado = document.getElementById('selectEstado');
+
+      // Preencher regiões
+      Object.keys(dadosBrasil).forEach(regiao => {
+        const option = document.createElement('option');
+        option.value = regiao;
+        option.textContent = regiao;
+        selectRegiao.appendChild(option);
+      });
+
+      // Preencher estados ao selecionar região
+      selectRegiao.addEventListener('change', function() {
+        selectEstado.innerHTML = '<option value="">Selecione...</option>';
+        const estadosSelecionados = dadosBrasil[this.value] || [];
+        estadosSelecionados.forEach(estado => {
+          const option = document.createElement('option');
+          option.value = estado;
+          option.textContent = estado;
+          selectEstado.appendChild(option);
+        });
+      });
+    }
+
+    function atualizarCidades() {
+      const selectEstado = document.getElementById('selectEstado').value;
+      const selectCidade = document.getElementById('selectCidade');
+
+      selectCidade.innerHTML = '<option value="">Selecione...</option>';
+
+      if (selectEstado && cidadesPorEstado[selectEstado]) {
+        cidadesPorEstado[selectEstado].forEach(cidade => {
+          const option = document.createElement('option');
+          option.value = cidade;
+          option.textContent = cidade;
+          selectCidade.appendChild(option);
+        });
+      }
     }
 
     function editarCampanha(index) {
