@@ -609,11 +609,11 @@
       const selectRegiao = document.getElementById('selectRegiao');
       const selectEstado = document.getElementById('selectEstado');
 
-      // Carrega estados do Brasil via Geonames
-      fetch('http://api.geonames.org/childrenJSON?geonameId=3469034&username=demo')
+      // Carrega estados do Brasil via API IBGE (suporta HTTPS)
+      fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
         .then(res => res.json())
         .then(data => {
-          // Agrupar por região (usando a informação de adminCode1)
+          // Agrupar por região
           const estadosPorRegiao = {
             'Norte': [],
             'Nordeste': [],
@@ -622,66 +622,13 @@
             'Sul': []
           };
 
-          // Mapa de estados para regiões e códigos IBGE
-          const estadoRegiao = {
-            'Acre': 'Norte',
-            'Amapá': 'Norte',
-            'Amazonas': 'Norte',
-            'Pará': 'Norte',
-            'Rondônia': 'Norte',
-            'Roraima': 'Norte',
-            'Tocantins': 'Norte',
-            'Alagoas': 'Nordeste',
-            'Bahia': 'Nordeste',
-            'Ceará': 'Nordeste',
-            'Maranhão': 'Nordeste',
-            'Paraíba': 'Nordeste',
-            'Pernambuco': 'Nordeste',
-            'Piauí': 'Nordeste',
-            'Rio Grande do Norte': 'Nordeste',
-            'Sergipe': 'Nordeste',
-            'Distrito Federal': 'Centro-Oeste',
-            'Goiás': 'Centro-Oeste',
-            'Mato Grosso': 'Centro-Oeste',
-            'Mato Grosso do Sul': 'Centro-Oeste',
-            'Espírito Santo': 'Sudeste',
-            'Minas Gerais': 'Sudeste',
-            'Rio de Janeiro': 'Sudeste',
-            'São Paulo': 'Sudeste',
-            'Paraná': 'Sul',
-            'Rio Grande do Sul': 'Sul',
-            'Santa Catarina': 'Sul'
-          };
-
-          // Mapa de estados para códigos IBGE (adminCode1 do Geonames)
-          const estadoCodigo = {
-            'Acre': 'AC',
-            'Alagoas': 'AL',
-            'Amapá': 'AP',
-            'Amazonas': 'AM',
-            'Bahia': 'BA',
-            'Ceará': 'CE',
-            'Distrito Federal': 'DF',
-            'Espírito Santo': 'ES',
-            'Goiás': 'GO',
-            'Maranhão': 'MA',
-            'Mato Grosso': 'MT',
-            'Mato Grosso do Sul': 'MS',
-            'Minas Gerais': 'MG',
-            'Pará': 'PA',
-            'Paraíba': 'PB',
-            'Paraná': 'PR',
-            'Pernambuco': 'PE',
-            'Piauí': 'PI',
-            'Rio de Janeiro': 'RJ',
-            'Rio Grande do Norte': 'RN',
-            'Rio Grande do Sul': 'RS',
-            'Rondônia': 'RO',
-            'Roraima': 'RR',
-            'Santa Catarina': 'SC',
-            'São Paulo': 'SP',
-            'Sergipe': 'SE',
-            'Tocantins': 'TO'
+          // Mapa de regiões por sigla
+          const regiaoSigla = {
+            'AC': 'Norte', 'AP': 'Norte', 'AM': 'Norte', 'PA': 'Norte', 'RO': 'Norte', 'RR': 'Norte', 'TO': 'Norte',
+            'AL': 'Nordeste', 'BA': 'Nordeste', 'CE': 'Nordeste', 'MA': 'Nordeste', 'PB': 'Nordeste', 'PE': 'Nordeste', 'PI': 'Nordeste', 'RN': 'Nordeste', 'SE': 'Nordeste',
+            'DF': 'Centro-Oeste', 'GO': 'Centro-Oeste', 'MT': 'Centro-Oeste', 'MS': 'Centro-Oeste',
+            'ES': 'Sudeste', 'MG': 'Sudeste', 'RJ': 'Sudeste', 'SP': 'Sudeste',
+            'PR': 'Sul', 'RS': 'Sul', 'SC': 'Sul'
           };
 
           // Preencher regiões
@@ -692,14 +639,20 @@
             selectRegiao.appendChild(option);
           });
 
-          // Armazenar estados e códigos por região
+          // Armazenar dados globais
           window.estadosPorRegiao = estadosPorRegiao;
-          window.estadoCodigo = estadoCodigo;
-          data.geonames.forEach(state => {
-            const nomeFull = state.name;
-            const regiao = estadoRegiao[nomeFull];
+          window.estadosIBGE = {}; // Mapear nome completo -> ID IBGE
+          
+          // Procesar estados
+          data.forEach(state => {
+            const nome = state.nome;
+            const sigla = state.sigla;
+            const id = state.id;
+            const regiao = regiaoSigla[sigla];
+            
             if (regiao && estadosPorRegiao[regiao]) {
-              estadosPorRegiao[regiao].push(nomeFull);
+              estadosPorRegiao[regiao].push(nome);
+              window.estadosIBGE[nome] = { sigla, id };
             }
           });
 
@@ -709,22 +662,21 @@
             const estadosSelecionados = window.estadosPorRegiao[this.value] || [];
             estadosSelecionados.sort().forEach(estado => {
               const option = document.createElement('option');
-              option.value = estado; // Guardar nome completo para atualizarCidades funcionar
-              const uf = window.estadoCodigo[estado]; // Buscar UF para exibição
-              option.textContent = `${uf} - ${estado}`; // Exibir como "SP - São Paulo"
+              option.value = estado;
+              const uf = window.estadosIBGE[estado]?.sigla || '??';
+              option.textContent = `${uf} - ${estado}`;
               selectEstado.appendChild(option);
             });
           });
         })
         .catch(err => {
           console.error('Erro ao carregar estados:', err);
-          // Fallback para dados hardcoded se API falhar
           carregarEstadosLocal();
         });
     }
 
     function carregarEstadosLocal() {
-      // Fallback para dados locais se API falhar
+      // Fallback para dados locais se API IBGE falhar
       const selectRegiao = document.getElementById('selectRegiao');
       const selectEstado = document.getElementById('selectEstado');
       
@@ -800,28 +752,27 @@
         return;
       }
 
-      // Converter nome do estado para código IBGE
-      const codigoEstado = window.estadoCodigo ? window.estadoCodigo[selectEstado] : null;
+      // Buscar ID IBGE do estado
+      const estadoInfo = window.estadosIBGE ? window.estadosIBGE[selectEstado] : null;
       
-      if (!codigoEstado) {
-        selectCidade.innerHTML = '<option value="">Código de estado não encontrado</option>';
+      if (!estadoInfo) {
+        selectCidade.innerHTML = '<option value="">Estado não encontrado</option>';
         return;
       }
 
-      // Usar Geonames para buscar cidades com o código correto
-      fetch(`http://api.geonames.org/searchJSON?country=BR&adminCode1=${codigoEstado}&featureClass=P&username=demo&maxRows=1000`)
+      // Usar API IBGE para buscar municípios
+      fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estadoInfo.id}/municipios`)
         .then(res => res.json())
         .then(data => {
           selectCidade.innerHTML = '<option value="">Selecione...</option>';
           
-          // Verificar se há dados
-          if (!data.geonames || data.geonames.length === 0) {
+          if (!data || data.length === 0) {
             selectCidade.innerHTML = '<option value="">Nenhuma cidade encontrada</option>';
             return;
           }
           
-          // Pegar cidades únicas e ordenar
-          const cidades = [...new Set(data.geonames.map(city => city.name))].sort();
+          // Extrair e ordenar nomes das cidades
+          const cidades = data.map(city => city.nome).sort();
           
           cidades.forEach(cidade => {
             const option = document.createElement('option');
