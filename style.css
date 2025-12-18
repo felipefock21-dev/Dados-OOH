@@ -299,7 +299,7 @@ main {
 
 .btn-ativo {
   background: linear-gradient(135deg, #06055b 0%, #1a1a7f 100%);
-  color: white !important;
+  color: rgb(55 249 106) !important;
   padding: 40px 60px !important;
   font-size: 1.3em !important;
   border-radius: 8px !important;
@@ -322,7 +322,7 @@ main {
 
 .btn-inativo {
   background: linear-gradient(135deg, #06055b 0%, #1a1a7f 100%);
-  color: white !important;
+  color: rgb(249 55 55) !important;
   padding: 40px 60px !important;
   font-size: 1.3em !important;
   border-radius: 8px !important;
@@ -353,7 +353,7 @@ main {
   margin: 40px auto 0;
   padding: 12px 30px !important;
   background: linear-gradient(135deg, #06055b 0%, #1a1a7f 100%);
-  color: white !important;
+  color: #fc1e75 !important;
   font-size: 1.1em !important;
   font-weight: 600 !important;
   border: 2px solid #fc1e75 !important;
