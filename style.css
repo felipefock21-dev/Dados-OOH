@@ -463,7 +463,7 @@ main {
   font-size: 0.9em;
   background: linear-gradient(135deg, #06055b 0%, #1a1a7f 100%);
   color: white;
-  border: 2px solid #fc1e75;
+  border: 1px solid #ddd;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
