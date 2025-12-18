@@ -752,6 +752,7 @@ main {
   padding: 50px;
   font-size: 1.2em;
   color: #0052cc;
+  display: none;
 }
 
 .spinner::after {
