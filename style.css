@@ -352,7 +352,7 @@ main {
   display: block;
   margin: 40px auto 0;
   padding: 12px 30px !important;
-  background: transparent !important;
+  background: linear-gradient(135deg, #06055b 0%, #1a1a7f 100%) !important;
   color: #fc1e75 !important;
   font-size: 1.1em !important;
   font-weight: 600 !important;
@@ -361,10 +361,13 @@ main {
   cursor: pointer !important;
   transition: all 0.3s ease;
   font-family: 'Space Grotesk', sans-serif !important;
+  box-shadow: 0 4px 12px rgba(252, 30, 117, 0.2);
 }
 
 .btn-adicionar-campanha:hover {
+  background: linear-gradient(135deg, #0a0a3f 0%, #2a2a9f 100%) !important;
   color: #ff1493 !important;
+  box-shadow: 0 6px 16px rgba(252, 30, 117, 0.3) !important;
   transform: translateY(-2px);
 }
 
