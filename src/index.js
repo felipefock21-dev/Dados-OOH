@@ -73,15 +73,29 @@ async function getDados(env) {
 // Função para adicionar registro
 async function addDado(env, novoRegistro) {
   try {
+    console.log('=== addDado START ===');
+    console.log('novoRegistro:', JSON.stringify(novoRegistro));
+    
     const apiKey = env.GOOGLE_SHEETS_API_KEY;
     const sheetId = env.GOOGLE_SHEETS_ID;
-    const sheetName = env.GOOGLE_SHEET_NAME || 'Visão geral';
+    const sheetName = 'Visão geral'; // HARDCODED como em getDados
     
+    console.log('Fetching headers...');
     const { headers } = await getDados(env);
+    console.log('Headers:', headers);
     
-    const novaLinha = headers.map(h => novoRegistro[h] || '');
+    // Mapear dados para a ordem correta das colunas
+    const novaLinha = headers.map(h => {
+      const valor = novoRegistro[h];
+      return valor !== undefined ? String(valor) : '';
+    });
     
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(sheetName)}:append?valueInputOption=USER_ENTERED&key=${apiKey}`;
+    console.log('novaLinha:', novaLinha);
+    
+    // Usar o formato correto: SheetName!A:Z (sem encode)
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/'${sheetName}':append?valueInputOption=USER_ENTERED&key=${apiKey}`;
+    
+    console.log('URL:', url.substring(0, 100) + '...');
     
     const response = await fetch(url, {
       method: 'POST',
@@ -89,13 +103,18 @@ async function addDado(env, novoRegistro) {
       body: JSON.stringify({ values: [novaLinha] }),
     });
 
+    const responseData = await response.json();
+    console.log('Google Sheets Response:', responseData);
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`Erro na API: ${errorData.error?.message || response.statusText}`);
+      console.error('Google Sheets Error:', JSON.stringify(responseData));
+      throw new Error(`Erro na API Google: ${responseData.error?.message || response.statusText}`);
     }
 
+    console.log('✓ Record added successfully');
     return { sucesso: true, mensagem: 'Registro criado' };
   } catch (error) {
+    console.error('addDado error:', error.message);
     throw new Error(`Erro ao criar: ${error.message}`);
   }
 }
