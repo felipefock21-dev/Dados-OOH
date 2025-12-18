@@ -249,6 +249,24 @@
     </div>
   </div>
 
+  <!-- MODAL DE LOADING -->
+  <div id="modalLoading" class="modal-loading">
+    <div class="loading-container">
+      <!-- Estado de Loading -->
+      <div id="loadingState" class="loading-state active">
+        <div class="spinner"></div>
+        <h2 id="loadingTitle">Estamos subindo sua campanha</h2>
+        <p id="loadingSubtitle">Só um minutinho...</p>
+      </div>
+
+      <!-- Estado de Sucesso -->
+      <div id="successState" class="success-state">
+        <div class="checkmark">✔</div>
+        <h2 id="successTitle">Tá feito!</h2>
+      </div>
+    </div>
+  </div>
+
   <script>
     // ============================================
     // CONFIGURAÇÃO DA API
@@ -598,12 +616,20 @@
 
         console.log('📊 Dados a enviar:', JSON.stringify(novaLinha));
 
+        // Mostrar modal de loading
+        const modalLoading = document.getElementById('modalLoading');
+        modalLoading.classList.add('active');
+        const loadingState = document.getElementById('loadingState');
+        const successState = document.getElementById('successState');
+        loadingState.classList.remove('hidden');
+        successState.classList.remove('active');
+
         // Enviar para Google Apps Script
         console.log('🚀 Enviando POST para Apps Script...');
         const response = await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
-          mode: 'no-cors', // Desabilitar CORS para Apps Script
-          headers: { 'Content-Type': 'text/plain' }, // Apps Script funciona melhor com text/plain
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify(novaLinha)
         });
 
@@ -611,20 +637,30 @@
         console.log('Status:', response.status);
         console.log('OK:', response.ok);
 
-        // Com no-cors não conseguimos ler a resposta, então assumimos sucesso
-        alert('Campanha adicionada com sucesso!');
-        fecharModalNovaCampanha();
-        
-        // Limpar formulário
-        document.getElementById('formNovaCampanha').reset();
-        
-        // Recarregar dados
-        console.log('♻️ Recarregando dados em 2 segundos...');
-        setTimeout(carregarDados, 2000);
+        // Mostrar sucesso
+        setTimeout(() => {
+          loadingState.classList.add('hidden');
+          successState.classList.add('active');
+        }, 500);
+
+        // Fechar modal e limpar formulário após 2 segundos
+        setTimeout(() => {
+          modalLoading.classList.remove('active');
+          alert('Campanha adicionada com sucesso!');
+          fecharModalNovaCampanha();
+          document.getElementById('formNovaCampanha').reset();
+          console.log('♻️ Recarregando dados em 2 segundos...');
+          setTimeout(carregarDados, 2000);
+        }, 2000);
         
       } catch (error) {
         console.error('❌ Erro completo:', error);
         console.error('Stack:', error.stack);
+        
+        // Fechar modal de loading em caso de erro
+        const modalLoading = document.getElementById('modalLoading');
+        modalLoading.classList.remove('active');
+        
         alert('Erro ao adicionar campanha: ' + error.message);
       }
     }
