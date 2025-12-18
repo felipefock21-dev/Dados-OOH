@@ -343,7 +343,7 @@
 
     async function carregarDados() {
       try {
-        loadingSpinner.style.display = 'block';
+        if (loadingSpinner) loadingSpinner.style.display = 'block';
         errorMessage.classList.remove('active');
         
         const response = await fetch(`${API_BASE}/dados`);
@@ -359,12 +359,12 @@
           dados = [];
         }
         
-        loadingSpinner.style.display = 'none';
+        if (loadingSpinner) loadingSpinner.style.display = 'none';
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
         mostrarErro(`❌ Erro ao carregar dados: ${error.message}`);
         dados = [];
-        loadingSpinner.style.display = 'none';
+        if (loadingSpinner) loadingSpinner.style.display = 'none';
       }
     }
 
