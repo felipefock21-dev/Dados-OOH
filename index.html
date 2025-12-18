@@ -611,7 +611,11 @@
       document.getElementById('inputCampanha').value = campanha['Campanha'] || '';
       document.getElementById('inputTipoOOH').value = campanha['Tipo de OOH'] || '';
       document.getElementById('selectStatus').value = campanha['Status Campanha'] || 'Ativa';
-      document.getElementById('selectRegiao').value = campanha['Região'] || '';
+      
+      // Selecionar região e disparar evento para carregar estados
+      const selectRegiao = document.getElementById('selectRegiao');
+      selectRegiao.value = campanha['Região'] || '';
+      selectRegiao.dispatchEvent(new Event('change'));
       
       // Obter a sigla do estado (ele vem armazenado como sigla no Sheets)
       const estadoSigla = (campanha['Estado'] || '').toUpperCase();
@@ -619,18 +623,26 @@
       
       // Esperar região carregar e depois atualizar estado
       setTimeout(() => {
-        // O value do select é "UF - Nome" mas procuramos pela sigla
         const selectEstado = document.getElementById('selectEstado');
         
-        // Encontrar a opção que tem essa sigla
-        for (let opt of selectEstado.options) {
-          if (opt.value.startsWith(estadoSigla + ' -')) {
-            selectEstado.value = opt.value;
+        // Procurar por qual estado tem essa sigla
+        // window.estadosIBGE mapeia nome completo -> { sigla, id }
+        let estadoNome = '';
+        for (const [nome, dados] of Object.entries(window.estadosIBGE || {})) {
+          if (dados.sigla === estadoSigla) {
+            estadoNome = nome;
             break;
           }
         }
         
-        console.log('Estado selecionado:', selectEstado.value);
+        console.log('Estado encontrado:', estadoNome);
+        
+        // Selecionar o estado pelo nome
+        if (estadoNome) {
+          selectEstado.value = estadoNome;
+        } else {
+          console.warn('Estado com sigla', estadoSigla, 'não encontrado');
+        }
         
         // Disparar evento de mudança para atualizar cidades
         selectEstado.dispatchEvent(new Event('change'));
