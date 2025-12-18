@@ -346,6 +346,42 @@ main {
   letter-spacing: 2px;
 }
 
+/* LOGO SECTION */
+.logo-section {
+  margin: 40px 0 30px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.section-logo {
+  max-height: 120px;
+  width: auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+/* ADD CAMPAIGN BUTTON */
+.btn-adicionar {
+  background: linear-gradient(135deg, #06055b 0%, #1a0f7f 100%);
+  color: white !important;
+  padding: 18px 50px !important;
+  font-size: 1.1em !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 6px 16px rgba(6, 5, 91, 0.3);
+  transition: all 0.3s ease;
+  border: 2px solid #fc1e75 !important;
+}
+
+.btn-adicionar:hover {
+  background: linear-gradient(135deg, #1a0f7f 0%, #2d1b99 100%) !important;
+  box-shadow: 0 10px 24px rgba(252, 30, 117, 0.4) !important;
+  transform: translateY(-2px);
+}
+
+.btn-adicionar:active {
+  transform: translateY(0);
+}
+
 /* TABLE */
 .table-section {
   overflow-x: auto;
