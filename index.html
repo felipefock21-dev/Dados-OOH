@@ -105,7 +105,7 @@
     <div id="modalCampanhas" class="modal">
       <div class="modal-content modal-content-large">
         <span class="close" id="closeCampanhas">&times;</span>
-        <h2 id="tituloModalCampanhas">Campanhas de Cliente</h2>
+        <h2 id="tituloModalCampanhas">Visualizar Campanha</h2>
         
         <div class="campanhas-container">
           <div id="campanhasSpinner" class="spinner">Carregando campanhas...</div>
@@ -364,7 +364,7 @@
       campanhasSpinner.style.display = 'block';
       tabelaCampanhas.style.display = 'none';
       
-      tituloModalCampanhas.textContent = `Campanhas de ${nomeCliente} (${status})`;
+      tituloModalCampanhas.textContent = `Visualizar Campanha - ${nomeCliente} (${status})`;
       modalCampanhas.classList.add('active');
       
       // Filtrar campanhas deste cliente com o status correspondente (baseado em Status Campanha)
@@ -398,7 +398,6 @@
             <div class="table-actions-small">
               <button class="btn-edit-small" onclick="editarCampanha(${index})">✏️ Editar</button>
               <button class="btn-delete-small" onclick="deletarCampanha(${index})">🗑️ Deletar</button>
-              <button class="btn-status-small" onclick="alterarStatusCampanha(${index})">🔄 Alterar Status</button>
             </div>
           </td>
         `;

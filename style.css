@@ -477,31 +477,33 @@ main {
 .btn-edit-small {
   padding: 6px 10px;
   font-size: 0.8em;
-  background: #0052cc;
+  background: linear-gradient(135deg, #06055b 0%, #1a1a7f 100%);
   color: white;
-  border: none;
+  border: 1px solid #ddd;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .btn-edit-small:hover {
-  background: #003d99;
+  background: linear-gradient(135deg, #0a0a3f 0%, #2a2a9f 100%);
+  box-shadow: 0 2px 6px rgba(252, 30, 117, 0.2);
 }
 
 .btn-delete-small {
   padding: 6px 10px;
   font-size: 0.8em;
-  background: #dc3545;
+  background: linear-gradient(135deg, #06055b 0%, #1a1a7f 100%);
   color: white;
-  border: none;
+  border: 1px solid #ddd;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .btn-delete-small:hover {
-  background: #c82333;
+  background: linear-gradient(135deg, #0a0a3f 0%, #2a2a9f 100%);
+  box-shadow: 0 2px 6px rgba(252, 30, 117, 0.2);
 }
 
 .btn-status-small {
