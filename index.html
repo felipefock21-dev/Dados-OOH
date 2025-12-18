@@ -898,7 +898,13 @@
 
         // Fechar modal e limpar após 2 segundos
         setTimeout(() => {
+          // Remover classe active do modal para ocultá-lo completamente
           modalLoading.classList.remove('active');
+          
+          // Resetar estados visuais do modal
+          loadingState.classList.remove('hidden');
+          successState.classList.remove('active');
+          
           alert(isEdicao ? 'Campanha atualizada com sucesso!' : 'Campanha adicionada com sucesso!');
           fecharModalNovaCampanha();
           
@@ -910,8 +916,8 @@
           document.getElementById('formNovaCampanha').reset();
           campanhaEmEdicao = null;
           
-          console.log('♻️ Recarregando dados em 2 segundos...');
-          setTimeout(carregarDados, 2000);
+          // Recarregar dados imediatamente
+          carregarDados();
         }, 2000);
         
       } catch (error) {
