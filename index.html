@@ -634,11 +634,21 @@
         const selectEstado = document.getElementById('selectEstado');
         
         console.log('Tentando selecionar estado:', estadoNome);
-        console.log('Opções disponíveis:', Array.from(selectEstado.options).map(o => o.value));
+        const opcoesDisponiveis = Array.from(selectEstado.options).map(o => ({ value: o.value, text: o.text }));
+        console.log('Opções disponíveis:', opcoesDisponiveis);
         
-        // O estado já vem como nome completo, então só precisa selecionar direto
-        selectEstado.value = estadoNome;
-        console.log('Estado selecionado:', selectEstado.value);
+        // Procurar por uma opção que coincida com o nome do estado (case-insensitive)
+        const opcaoEncontrada = Array.from(selectEstado.options).find(opt => 
+          opt.value.toLowerCase().trim() === estadoNome.toLowerCase().trim()
+        );
+        
+        if (opcaoEncontrada) {
+          selectEstado.value = opcaoEncontrada.value;
+          console.log('✓ Estado selecionado:', selectEstado.value);
+        } else {
+          console.warn('❌ Estado não encontrado. Procurado:', estadoNome);
+          console.warn('Valores disponíveis:', Array.from(selectEstado.options).map(o => o.value));
+        }
         
         // Disparar evento de mudança para atualizar cidades
         selectEstado.dispatchEvent(new Event('change'));
@@ -646,8 +656,19 @@
         // Esperar cidades carregarem e depois selecionar
         setTimeout(() => {
           const cidadeNome = campanha['Cidade'] || '';
-          document.getElementById('selectCidade').value = cidadeNome;
-          console.log('Cidade selecionada:', cidadeNome);
+          const selectCidade = document.getElementById('selectCidade');
+          
+          // Procurar por uma opção que coincida com o nome da cidade (case-insensitive)
+          const opcaoCidadeEncontrada = Array.from(selectCidade.options).find(opt => 
+            opt.value.toLowerCase().trim() === cidadeNome.toLowerCase().trim()
+          );
+          
+          if (opcaoCidadeEncontrada) {
+            selectCidade.value = opcaoCidadeEncontrada.value;
+            console.log('✓ Cidade selecionada:', selectCidade.value);
+          } else {
+            console.warn('❌ Cidade não encontrada. Procurada:', cidadeNome);
+          }
         }, 500);
       }, 800);
       
