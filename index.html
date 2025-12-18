@@ -604,7 +604,13 @@
       campanhaEmEdicao = { index, original: dados[index] };
       const campanha = dados[index];
       
-      console.log('🔧 Editando campanha:', campanha);
+      console.log('🔧 Editando campanha - Index:', index);
+      console.log('🔧 Dados completos:', campanha);
+      console.log('🔧 Cliente:', campanha['Cliente']);
+      console.log('🔧 Campanha:', campanha['Campanha']);
+      console.log('🔧 Estado:', campanha['Estado']);
+      console.log('🔧 Região:', campanha['Região']);
+      console.log('🔧 Cidade:', campanha['Cidade']);
       
       // Preencher formulário com dados da campanha
       document.getElementById('inputCliente').value = campanha['Cliente'] || '';
@@ -615,6 +621,7 @@
       // Selecionar região e disparar evento para carregar estados
       const selectRegiao = document.getElementById('selectRegiao');
       selectRegiao.value = campanha['Região'] || '';
+      console.log('Região selecionada:', selectRegiao.value);
       selectRegiao.dispatchEvent(new Event('change'));
       
       // Obter a sigla do estado (ele vem armazenado como sigla no Sheets)
