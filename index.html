@@ -103,11 +103,11 @@
           <table id="tabelaCampanhas" class="table" style="display: none;">
             <thead>
               <tr>
-                <th>Campanha</th>
-                <th>Tipo OOH</th>
                 <th>Cidade</th>
                 <th>Exibidora</th>
-                <th>Investimento</th>
+                <th>Tipo OOH</th>
+                <th>Início da campanha</th>
+                <th>Término da campanha</th>
                 <th>Status</th>
                 <th>Ações</th>
               </tr>
@@ -368,7 +368,7 @@
       tabelaCampanhasBody.innerHTML = '';
       
       if (campanhasDoCliente.length === 0) {
-        tabelaCampanhasBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 30px;">Nenhuma campanha encontrada</td></tr>';
+        tabelaCampanhasBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 30px;">Nenhuma campanha encontrada</td></tr>';
         campanhasSpinner.style.display = 'none';
         tabelaCampanhas.style.display = 'table';
         return;
@@ -376,15 +376,14 @@
       
       campanhasDoCliente.forEach((campanha, index) => {
         const linha = document.createElement('tr');
-        const investimentoFormatado = `R$ ${parseFloat((campanha['Investimento'] || '0').replace(/[^\d,]/g, '').replace(',', '.')).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         const statusCampanha = campanha['Status Campanha'] || '-';
         
         linha.innerHTML = `
-          <td>${campanha['Campanha'] || '-'}</td>
-          <td>${campanha['Tipo de OOH'] || '-'}</td>
           <td>${campanha['Cidade'] || '-'}</td>
           <td>${campanha['Exibidora'] || '-'}</td>
-          <td>${investimentoFormatado}</td>
+          <td>${campanha['Tipo de OOH'] || '-'}</td>
+          <td>${campanha['Início da campanha'] || '-'}</td>
+          <td>${campanha['Término da campanha'] || '-'}</td>
           <td><span class="status ${statusCampanha.toLowerCase()}">${statusCampanha}</span></td>
           <td>
             <div class="table-actions-small">
