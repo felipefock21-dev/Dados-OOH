@@ -699,6 +699,152 @@
     }
 
     // ============================================
+    // DADOS DO BRASIL (Regiões, Estados, Cidades)
+    // ============================================
+
+    const dadosBrasil = {
+      'Norte': {
+        'Rondônia': ['Porto Velho', 'Ji-Paraná', 'Ariquemes'],
+        'Acre': ['Rio Branco', 'Cruzeiro do Sul'],
+        'Amazonas': ['Manaus', 'Parintins'],
+        'Roraima': ['Boa Vista', 'Rorainópolis'],
+        'Pará': ['Belém', 'Marabá', 'Parauapebas'],
+        'Amapá': ['Macapá', 'Santana'],
+        'Tocantins': ['Palmas', 'Araguaína']
+      },
+      'Nordeste': {
+        'Maranhão': ['São Luís', 'Imperatriz'],
+        'Piauí': ['Teresina', 'Parnaíba'],
+        'Ceará': ['Fortaleza', 'Juazeiro do Norte'],
+        'Rio Grande do Norte': ['Natal', 'Mossoró'],
+        'Paraíba': ['João Pessoa', 'Campina Grande'],
+        'Pernambuco': ['Recife', 'Caruaru'],
+        'Alagoas': ['Maceió'],
+        'Sergipe': ['Aracaju'],
+        'Bahia': ['Salvador', 'Feira de Santana', 'Vitória da Conquista']
+      },
+      'Centro-Oeste': {
+        'Mato Grosso do Sul': ['Campo Grande', 'Dourados'],
+        'Mato Grosso': ['Cuiabá', 'Várzea Grande'],
+        'Goiás': ['Goiânia', 'Anápolis'],
+        'Distrito Federal': ['Brasília']
+      },
+      'Sudeste': {
+        'São Paulo': ['São Paulo', 'Campinas', 'Santos', 'Sorocaba'],
+        'Rio de Janeiro': ['Rio de Janeiro', 'Niterói'],
+        'Espírito Santo': ['Vitória', 'Vila Velha'],
+        'Minas Gerais': ['Belo Horizonte', 'Uberlândia', 'Juiz de Fora']
+      },
+      'Sul': {
+        'Paraná': ['Curitiba', 'Londrina', 'Maringá'],
+        'Santa Catarina': ['Florianópolis', 'Blumenau'],
+        'Rio Grande do Sul': ['Porto Alegre', 'Caxias do Sul']
+      }
+    };
+
+    // ============================================
+    // MODAL DE NOVA CAMPANHA
+    // ============================================
+
+    function abrirModalNovaCampanha() {
+      document.getElementById('modalNovaCampanha').classList.add('active');
+      document.getElementById('formNovaCampanha').reset();
+    }
+
+    function fecharModalNovaCampanha() {
+      document.getElementById('modalNovaCampanha').classList.remove('active');
+    }
+
+    function inicializarSelects() {
+      const selectRegiao = document.getElementById('selectRegiao');
+      const selectEstado = document.getElementById('selectEstado');
+      
+      // Preencher regiões
+      Object.keys(dadosBrasil).forEach(regiao => {
+        const option = document.createElement('option');
+        option.value = regiao;
+        option.textContent = regiao;
+        selectRegiao.appendChild(option);
+      });
+
+      // Listener para atualizar estados quando região muda
+      selectRegiao.addEventListener('change', function() {
+        const regiao = this.value;
+        selectEstado.innerHTML = '<option value="">Selecione...</option>';
+        document.getElementById('selectCidade').innerHTML = '<option value="">Selecione um estado primeiro</option>';
+        
+        if (regiao && dadosBrasil[regiao]) {
+          Object.keys(dadosBrasil[regiao]).forEach(estado => {
+            const option = document.createElement('option');
+            option.value = estado;
+            option.textContent = estado;
+            selectEstado.appendChild(option);
+          });
+        }
+      });
+    }
+
+    function atualizarCidades() {
+      const selectRegiao = document.getElementById('selectRegiao');
+      const selectEstado = document.getElementById('selectEstado');
+      const selectCidade = document.getElementById('selectCidade');
+      
+      const regiao = selectRegiao.value;
+      const estado = selectEstado.value;
+      
+      selectCidade.innerHTML = '<option value="">Selecione...</option>';
+      
+      if (regiao && estado && dadosBrasil[regiao] && dadosBrasil[regiao][estado]) {
+        dadosBrasil[regiao][estado].forEach(cidade => {
+          const option = document.createElement('option');
+          option.value = cidade;
+          option.textContent = cidade;
+          selectCidade.appendChild(option);
+        });
+      }
+    }
+
+    async function salvarNovaCampanha(e) {
+      e.preventDefault();
+      
+      try {
+        const formData = new FormData(document.getElementById('formNovaCampanha'));
+        const novaCampanha = {
+          'Cliente': document.getElementById('inputCliente').value,
+          'Campanha': document.getElementById('inputCampanha').value,
+          'Tipo de OOH': document.getElementById('inputTipoOOH').value,
+          'Status Campanha': document.getElementById('selectStatus').value,
+          'Região': document.getElementById('selectRegiao').value,
+          'Estado': document.getElementById('selectEstado').value,
+          'Cidade': document.getElementById('selectCidade').value,
+          'Exibidora': document.getElementById('inputExibidora').value,
+          'Mês de exibição': document.getElementById('selectMes').value,
+          'Início da campanha': document.getElementById('inputDataInicio').value,
+          'Término da campanha': document.getElementById('inputDataFim').value,
+          'Impactos Total': document.getElementById('inputImpactos').value,
+          'Investimento': document.getElementById('inputInvestimento').value
+        };
+
+        const response = await fetch(`${API_BASE}/dados`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(novaCampanha)
+        });
+
+        if (!response.ok) {
+          throw new Error('Erro ao salvar campanha');
+        }
+
+        alert('Campanha adicionada com sucesso!');
+        fecharModalNovaCampanha();
+        carregarDados();
+      } catch (error) {
+        console.error('Erro ao salvar campanha:', error);
+        alert('Erro ao adicionar campanha: ' + error.message);
+      }
+    }
+
+    // ============================================
     // CRUD OPERATIONS
     // ============================================
 
