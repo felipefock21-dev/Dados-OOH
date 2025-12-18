@@ -852,13 +852,14 @@ main {
 /* BOTÕES DE AÇÃO NA TABELA */
 .table-actions-small {
   display: flex;
-  gap: 8px;
+  gap: 6px;
+  align-items: center;
   flex-wrap: wrap;
 }
 
 .btn-edit-small,
 .btn-delete-small {
-  padding: 6px 12px;
+  padding: 8px 12px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -866,30 +867,29 @@ main {
   font-weight: 500;
   transition: all 0.2s ease;
   white-space: nowrap;
+  background: linear-gradient(135deg, #06055b 0%, #1a1a7f 100%);
+  color: white;
+  border: 1px solid #06055b;
 }
 
 .btn-edit-small {
-  background: #fc1e75;
-  color: white;
-  border: 1px solid #fc1e75;
+  color: #fc1e75;
+  font-weight: 600;
 }
 
 .btn-edit-small:hover {
-  background: #e01860;
-  border-color: #e01860;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(252, 30, 117, 0.3);
 }
 
 .btn-delete-small {
-  background: #ff6b6b;
-  color: white;
-  border: 1px solid #ff6b6b;
+  color: #ff6b6b;
+  font-weight: 600;
 }
 
 .btn-delete-small:hover {
-  background: #ee5a52;
-  border-color: #ee5a52;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
 }
 
 @media (max-width: 768px) {
@@ -902,7 +902,7 @@ main {
   .btn-delete-small {
     width: 100%;
     font-size: 0.75em;
-    padding: 5px 8px;
+    padding: 6px 8px;
   }
 }
 
