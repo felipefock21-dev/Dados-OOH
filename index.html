@@ -629,8 +629,12 @@
       console.log('Estado (nome completo):', estadoNome);
       
       // Esperar região carregar e depois atualizar estado
+      // Aumentado para 800ms para garantir que a API IBGE terminou de carregar os estados
       setTimeout(() => {
         const selectEstado = document.getElementById('selectEstado');
+        
+        console.log('Tentando selecionar estado:', estadoNome);
+        console.log('Opções disponíveis:', Array.from(selectEstado.options).map(o => o.value));
         
         // O estado já vem como nome completo, então só precisa selecionar direto
         selectEstado.value = estadoNome;
@@ -645,7 +649,7 @@
           document.getElementById('selectCidade').value = cidadeNome;
           console.log('Cidade selecionada:', cidadeNome);
         }, 500);
-      }, 300);
+      }, 800);
       
       document.getElementById('inputExibidora').value = campanha['Exibidora'] || '';
       document.getElementById('selectMes').value = campanha['Mês de exibição'] || '';
