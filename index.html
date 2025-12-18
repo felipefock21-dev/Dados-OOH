@@ -40,7 +40,6 @@
           <thead>
             <tr>
               <th>Cliente</th>
-              <th>Status</th>
               <th>Campanhas</th>
               <th>Ações</th>
             </tr>
@@ -286,7 +285,7 @@
       statusFiltroAtual = status;
       
       // Atualizar título
-      tituloTabela.textContent = status === 'Ativo' ? 'Clientes Ativos' : 'Clientes Inativos';
+      tituloTabela.textContent = status === 'Ativo' ? 'Campanhas Ativas' : 'Campanhas Inativas';
       
       // Atualizar estilos dos botões
       if (status === 'Ativo') {
@@ -300,33 +299,29 @@
       // Mostrar tabela
       tabelaSectionContainer.style.display = 'block';
       
-      // Filtrar dados por status
+      // Determinar o status da campanha correspondente
+      const statusCampanha = status === 'Ativo' ? 'Ativa' : 'Inativa';
+      
+      // Filtrar dados por status de campanha
       const dadosFiltrados = dados.filter(registro => {
-        return registro['Status Cliente'] === status;
+        return registro['Status Campanha'] === statusCampanha;
       });
       
       // Atualizar tabela com dados filtrados
       tabelaDadosBody.innerHTML = '';
       
-      // Obter clientes únicos com status filtrado
+      // Obter clientes únicos que têm campanhas com este status
       const clientesUnicos = {};
       dadosFiltrados.forEach((registro) => {
         const cliente = registro['Cliente'] || '-';
         if (!clientesUnicos[cliente]) {
           clientesUnicos[cliente] = {
             nome: cliente,
-            status: registro['Status Cliente'],
             campanhas: 0,
-            investimento: 0,
             registros: []
           };
         }
         clientesUnicos[cliente].campanhas += 1;
-        
-        const investimento = parseFloat(
-          (registro['Investimento'] || 'R$ 0,00').replace(/[^\d,]/g, '').replace(',', '.')
-        );
-        clientesUnicos[cliente].investimento += isNaN(investimento) ? 0 : investimento;
         clientesUnicos[cliente].registros.push(registro);
       });
       
@@ -335,7 +330,7 @@
       );
       
       if (clientes.length === 0) {
-        tabelaDadosBody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 30px;">Nenhum cliente encontrado com status ' + status + '</td></tr>';
+        tabelaDadosBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 30px;">Nenhum cliente encontrado com campanhas ' + statusCampanha.toLowerCase() + '</td></tr>';
         return;
       }
       
@@ -344,11 +339,10 @@
         
         linha.innerHTML = `
           <td><strong>${cliente.nome}</strong></td>
-          <td><span class="status ${cliente.status.toLowerCase()}">${cliente.status}</span></td>
           <td>${cliente.campanhas}</td>
           <td>
             <div class="table-actions">
-              <button class="btn-view" onclick="abrirModalCampanhas('${cliente.nome}', '${statusFiltroAtual}')">👁️ Visualizar Campanhas</button>
+              <button class="btn-view" onclick="abrirModalCampanhas('${cliente.nome}', '${statusCampanha}')">👁️ Visualizar Campanhas</button>
             </div>
           </td>
         `;
@@ -428,14 +422,10 @@
       tituloModalCampanhas.textContent = `Campanhas de ${nomeCliente} (${status})`;
       modalCampanhas.classList.add('active');
       
-      // Determinar o status da campanha correspondente
-      const statusCampanha = status === 'Ativo' ? 'Ativa' : 'Inativa';
-      
-      // Filtrar campanhas deste cliente com o status correspondente (tanto do cliente quanto da campanha)
+      // Filtrar campanhas deste cliente com o status correspondente (baseado em Status Campanha)
       const campanhasDoCliente = dados.filter(registro => {
         return registro['Cliente'] === nomeCliente && 
-               registro['Status Cliente'] === status &&
-               registro['Status Campanha'] === statusCampanha;
+               registro['Status Campanha'] === status;
       });
       
       // Renderizar tabela de campanhas
