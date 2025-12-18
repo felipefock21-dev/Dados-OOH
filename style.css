@@ -400,6 +400,73 @@ main {
   align-items: center;
 }
 
+.table-actions-small {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.btn-view {
+  padding: 8px 12px;
+  font-size: 0.9em;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-view:hover {
+  background: #218838;
+}
+
+.btn-edit-small {
+  padding: 6px 10px;
+  font-size: 0.8em;
+  background: #0052cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-edit-small:hover {
+  background: #003d99;
+}
+
+.btn-delete-small {
+  padding: 6px 10px;
+  font-size: 0.8em;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-delete-small:hover {
+  background: #c82333;
+}
+
+.btn-status-small {
+  padding: 6px 10px;
+  font-size: 0.8em;
+  background: #ffc107;
+  color: black;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-status-small:hover {
+  background: #e0a800;
+}
+
 /* MODAL */
 .modal {
   display: none;
@@ -429,6 +496,15 @@ main {
   overflow-y: auto;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
   animation: slideIn 0.3s ease;
+}
+
+.modal-content-large {
+  max-width: 1200px;
+}
+
+.campanhas-container {
+  margin-top: 30px;
+  overflow-x: auto;
 }
 
 @keyframes slideIn {

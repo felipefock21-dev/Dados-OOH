@@ -42,7 +42,6 @@
               <th>Cliente</th>
               <th>Status</th>
               <th>Campanhas</th>
-              <th>Investimento Total</th>
               <th>Ações</th>
             </tr>
           </thead>
@@ -101,6 +100,33 @@
         </div>
       </div>
     </div>
+
+    <!-- MODAL DE CAMPANHAS -->
+    <div id="modalCampanhas" class="modal">
+      <div class="modal-content modal-content-large">
+        <span class="close" id="closeCampanhas">&times;</span>
+        <h2 id="tituloModalCampanhas">Campanhas de Cliente</h2>
+        
+        <div class="campanhas-container">
+          <div id="campanhasSpinner" class="spinner">Carregando campanhas...</div>
+          <table id="tabelaCampanhas" class="table" style="display: none;">
+            <thead>
+              <tr>
+                <th>Campanha</th>
+                <th>Tipo OOH</th>
+                <th>Cidade</th>
+                <th>Exibidora</th>
+                <th>Investimento</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaCampanhasBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -135,6 +161,11 @@
     const searchInput = document.getElementById('searchInput');
     const loadingSpinner = document.getElementById('loadingSpinner');
     const errorMessage = document.getElementById('errorMessage');
+    const modalCampanhas = document.getElementById('modalCampanhas');
+    const tabelaCampanhas = document.getElementById('tabelaCampanhas');
+    const tabelaCampanhasBody = document.getElementById('tabelaCampanhasBody');
+    const campanhasSpinner = document.getElementById('campanhasSpinner');
+    const tituloModalCampanhas = document.getElementById('tituloModalCampanhas');
 
     // ============================================
     // EVENT LISTENERS
@@ -144,6 +175,7 @@
     btnInativo.addEventListener('click', () => filtrarPorStatus('Inativo'));
     btnCancelar.addEventListener('click', fecharModal);
     document.querySelector('.close').addEventListener('click', fecharModal);
+    document.getElementById('closeCampanhas').addEventListener('click', fecharModalCampanhas);
     formulario.addEventListener('submit', salvarRegistro);
 
     window.addEventListener('load', carregarDados);
@@ -303,23 +335,20 @@
       );
       
       if (clientes.length === 0) {
-        tabelaDadosBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 30px;">Nenhum cliente encontrado com status ' + status + '</td></tr>';
+        tabelaDadosBody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 30px;">Nenhum cliente encontrado com status ' + status + '</td></tr>';
         return;
       }
       
       clientes.forEach((cliente, index) => {
         const linha = document.createElement('tr');
-        const investimentoFormatado = `R$ ${cliente.investimento.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         
         linha.innerHTML = `
           <td><strong>${cliente.nome}</strong></td>
           <td><span class="status ${cliente.status.toLowerCase()}">${cliente.status}</span></td>
           <td>${cliente.campanhas}</td>
-          <td>${investimentoFormatado}</td>
           <td>
             <div class="table-actions">
-              <button class="btn-edit" onclick="abrirModalEditar('${cliente.nome}')">✏️ Editar</button>
-              <button class="btn-delete" onclick="confirmarDeletar('${cliente.nome}')">🗑️ Deletar</button>
+              <button class="btn-view" onclick="abrirModalCampanhas('${cliente.nome}', '${statusFiltroAtual}')">👁️ Visualizar Campanhas</button>
             </div>
           </td>
         `;
@@ -387,6 +416,76 @@
     btnCancelarDelete.addEventListener('click', () => {
       modalConfirmacao.classList.remove('active');
     });
+
+    // ============================================
+    // MODAL DE CAMPANHAS
+    // ============================================
+
+    function abrirModalCampanhas(nomeCliente, status) {
+      campanhasSpinner.style.display = 'block';
+      tabelaCampanhas.style.display = 'none';
+      
+      tituloModalCampanhas.textContent = `Campanhas de ${nomeCliente} (${status})`;
+      modalCampanhas.classList.add('active');
+      
+      // Filtrar campanhas deste cliente com o status correspondente
+      const campanhasDoCliente = dados.filter(registro => {
+        return registro['Cliente'] === nomeCliente && registro['Status Cliente'] === status;
+      });
+      
+      // Renderizar tabela de campanhas
+      tabelaCampanhasBody.innerHTML = '';
+      
+      if (campanhasDoCliente.length === 0) {
+        tabelaCampanhasBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 30px;">Nenhuma campanha encontrada</td></tr>';
+        campanhasSpinner.style.display = 'none';
+        tabelaCampanhas.style.display = 'table';
+        return;
+      }
+      
+      campanhasDoCliente.forEach((campanha, index) => {
+        const linha = document.createElement('tr');
+        const investimentoFormatado = `R$ ${parseFloat((campanha['Investimento'] || '0').replace(/[^\d,]/g, '').replace(',', '.')).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        const statusCampanha = campanha['Status Campanha'] || '-';
+        
+        linha.innerHTML = `
+          <td>${campanha['Campanha'] || '-'}</td>
+          <td>${campanha['Tipo de OOH'] || '-'}</td>
+          <td>${campanha['Cidade'] || '-'}</td>
+          <td>${campanha['Exibidora'] || '-'}</td>
+          <td>${investimentoFormatado}</td>
+          <td><span class="status ${statusCampanha.toLowerCase()}">${statusCampanha}</span></td>
+          <td>
+            <div class="table-actions-small">
+              <button class="btn-edit-small" onclick="editarCampanha(${index})">✏️ Editar</button>
+              <button class="btn-delete-small" onclick="deletarCampanha(${index})">🗑️ Deletar</button>
+              <button class="btn-status-small" onclick="alterarStatusCampanha(${index})">🔄 Alterar Status</button>
+            </div>
+          </td>
+        `;
+        
+        tabelaCampanhasBody.appendChild(linha);
+      });
+      
+      campanhasSpinner.style.display = 'none';
+      tabelaCampanhas.style.display = 'table';
+    }
+
+    function fecharModalCampanhas() {
+      modalCampanhas.classList.remove('active');
+    }
+
+    function editarCampanha(index) {
+      alert('Função de editar campanha será implementada');
+    }
+
+    function deletarCampanha(index) {
+      alert('Função de deletar campanha será implementada');
+    }
+
+    function alterarStatusCampanha(index) {
+      alert('Função de alterar status será implementada');
+    }
 
     // ============================================
     // CRUD OPERATIONS
