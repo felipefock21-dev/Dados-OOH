@@ -584,6 +584,22 @@
 
     let campanhaEmEdicao = null;
 
+    // Função auxiliar para converter datas de DD/MM/AAAA para YYYY-MM-DD (para input type="date")
+    function formatarDataParaInput(dataStr) {
+      if (!dataStr) return '';
+      // Se já está no formato YYYY-MM-DD, retorna como está
+      if (dataStr.match(/^\d{4}-\d{2}-\d{2}$/)) return dataStr;
+      // Se está em DD/MM/AAAA, converte para YYYY-MM-DD
+      const partes = dataStr.split('/');
+      if (partes.length === 3) {
+        const dia = partes[0];
+        const mes = partes[1];
+        const ano = partes[2];
+        return `${ano}-${mes}-${dia}`;
+      }
+      return dataStr; // Se não reconhecer o formato, retorna como está
+    }
+
     function editarCampanha(index) {
       campanhaEmEdicao = { index, original: dados[index] };
       const campanha = dados[index];
@@ -629,8 +645,8 @@
       
       document.getElementById('inputExibidora').value = campanha['Exibidora'] || '';
       document.getElementById('selectMes').value = campanha['Mês de exibição'] || '';
-      document.getElementById('inputDataInicio').value = campanha['Início da campanha'] || '';
-      document.getElementById('inputDataFim').value = campanha['Término da campanha'] || '';
+      document.getElementById('inputDataInicio').value = formatarDataParaInput(campanha['Início da campanha'] || '');
+      document.getElementById('inputDataFim').value = formatarDataParaInput(campanha['Término da campanha'] || '');
       document.getElementById('inputImpactos').value = campanha['Impactos Total'] || '';
       
       // Remover "R$ " e parse do valor
@@ -730,6 +746,18 @@
       document.getElementById('formNovaCampanha').reset();
     }
 
+    // Função auxiliar para converter datas de YYYY-MM-DD para DD/MM/AAAA
+    function formatarDataParaPlanilha(dataStr) {
+      if (!dataStr) return '';
+      // dataStr vem no formato YYYY-MM-DD do input type="date"
+      const partes = dataStr.split('-');
+      if (partes.length !== 3) return dataStr; // Se não for o formato esperado, retorna como está
+      const ano = partes[0];
+      const mes = partes[1];
+      const dia = partes[2];
+      return `${dia}/${mes}/${ano}`; // Retorna DD/MM/AAAA
+    }
+
     async function salvarNovaCampanha(e) {
       e.preventDefault();
       
@@ -744,6 +772,9 @@
         console.log('Modo:', isEdicao ? 'EDIÇÃO' : 'CRIAÇÃO');
         console.log('campanhaEmEdicao:', campanhaEmEdicao);
 
+        const dataInicio = document.getElementById('inputDataInicio').value;
+        const dataFim = document.getElementById('inputDataFim').value;
+
         const novaLinha = {
           'Cliente': document.getElementById('inputCliente').value,
           'Status Cliente': '',
@@ -756,8 +787,8 @@
           'Exibidora': document.getElementById('inputExibidora').value,
           'URL logo exibidora': '',
           'Mês de exibição': document.getElementById('selectMes').value,
-          'Início da campanha': document.getElementById('inputDataInicio').value,
-          'Término da campanha': document.getElementById('inputDataFim').value,
+          'Início da campanha': formatarDataParaPlanilha(dataInicio),
+          'Término da campanha': formatarDataParaPlanilha(dataFim),
           'Impactos Total': document.getElementById('inputImpactos').value,
           'Investimento': 'R$ ' + parseFloat(document.getElementById('inputInvestimento').value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
         };
