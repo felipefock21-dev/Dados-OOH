@@ -68,17 +68,28 @@ function doPost(e) {
     }
     
     else if (action === 'delete') {
-      // Deletar linha (limpar conteúdo)
+      // Deletar linha (remover a linha inteira da planilha)
       const rowIndex = data.rowIndex;
       Logger.log('Deletando linha:', rowIndex);
+      Logger.log('Detalhes - Cliente:', data.cliente, 'Campanha:', data.campanha);
       
       if (!rowIndex || rowIndex < 2) {
-        throw new Error('rowIndex inválido');
+        throw new Error('rowIndex inválido: ' + rowIndex);
       }
       
-      const colunaFinal = headers.length;
-      sheet.getRange(rowIndex, 1, 1, colunaFinal).clearContent();
-      Logger.log('✓ Linha deletada');
+      // Verificar se a linha existe
+      const ultimaLinha = sheet.getLastRow();
+      if (rowIndex > ultimaLinha) {
+        throw new Error('Linha ' + rowIndex + ' não existe (última linha: ' + ultimaLinha + ')');
+      }
+      
+      // Obter valores da linha antes de deletar (para debug)
+      const valoresAntes = sheet.getRange(rowIndex, 1, 1, sheet.getLastColumn()).getValues()[0];
+      Logger.log('Valores da linha a deletar:', valoresAntes);
+      
+      // Deletar a linha inteira (não apenas limpar conteúdo)
+      sheet.deleteRow(rowIndex);
+      Logger.log('✓ Linha deletada com sucesso');
       
       return HtmlService.createHtmlOutput(JSON.stringify({
         sucesso: true,

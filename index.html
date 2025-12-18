@@ -541,7 +541,14 @@
         return;
       }
       
-      campanhasDoCliente.forEach((campanha, index) => {
+      campanhasDoCliente.forEach((campanha) => {
+        // Encontrar o índice real desta campanha no array dados
+        const indiceDados = dados.findIndex(d => 
+          d['Cliente'] === campanha['Cliente'] && 
+          d['Campanha'] === campanha['Campanha'] &&
+          d['Início da campanha'] === campanha['Início da campanha']
+        );
+        
         const linha = document.createElement('tr');
         const statusCampanha = campanha['Status Campanha'] || '-';
         
@@ -554,8 +561,8 @@
           <td><span class="status ${statusCampanha.toLowerCase()}">${statusCampanha}</span></td>
           <td>
             <div class="table-actions-small">
-              <button class="btn-edit-small" onclick="editarCampanha(${index})">✏️ Editar</button>
-              <button class="btn-delete-small" onclick="deletarCampanha(${index})">🗑️ Deletar</button>
+              <button class="btn-edit-small" onclick="editarCampanha(${indiceDados})">✏️ Editar</button>
+              <button class="btn-delete-small" onclick="deletarCampanha(${indiceDados})">🗑️ Deletar</button>
             </div>
           </td>
         `;
