@@ -6,7 +6,7 @@
 
 body {
   font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #f5f5f5;
+  background: linear-gradient(135deg, #f5f5f5 0%, #f0f0f0 100%);
   min-height: 100vh;
   padding: 20px;
   padding-top: 80px;
@@ -17,9 +17,10 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+  border: 1px solid rgba(252, 30, 117, 0.1);
 }
 
 /* TOP HEADER */
@@ -278,20 +279,22 @@ main {
 /* BUTTONS SECTION - ATIVO/INATIVO */
 .buttons-section {
   text-align: center;
-  padding: 30px 30px 20px;
-  background: white;
+  padding: 50px 30px 30px;
+  background: linear-gradient(135deg, rgba(6, 5, 91, 0.02) 0%, rgba(252, 30, 117, 0.02) 100%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .page-title {
-  font-size: 1.5em;
-  color: #555;
-  margin-bottom: 25px;
-  font-weight: 500;
+  font-size: 1.8em;
+  color: #06055b;
+  margin-bottom: 40px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
 }
 
 .buttons-container {
   display: flex;
-  gap: 60px;
+  gap: 40px;
   justify-content: center;
   flex-wrap: wrap;
   align-items: center;
@@ -300,85 +303,138 @@ main {
 .btn-ativo {
   background: linear-gradient(135deg, #06055b 0%, #1a1a7f 100%);
   color: white !important;
-  padding: 40px 60px !important;
-  font-size: 1.3em !important;
-  border-radius: 8px !important;
-  font-weight: 600 !important;
-  border: 1px solid #fc1e75 !important;
-  box-shadow: 0 4px 12px rgba(252, 30, 117, 0.2);
-  transition: all 0.3s ease;
+  padding: 45px 70px !important;
+  font-size: 1.2em !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  border: none !important;
+  box-shadow: 0 10px 30px rgba(6, 5, 91, 0.25);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ativo::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(252, 30, 117, 0.3), transparent);
+  transition: left 0.5s ease;
 }
 
 .btn-ativo:hover {
   background: linear-gradient(135deg, #0a0a3f 0%, #2a2a9f 100%) !important;
-  box-shadow: 0 6px 16px rgba(252, 30, 117, 0.3) !important;
-  transform: translateY(-1px);
+  box-shadow: 0 15px 40px rgba(252, 30, 117, 0.4) !important;
+  transform: translateY(-4px);
+}
+
+.btn-ativo:hover::before {
+  left: 100%;
 }
 
 .btn-ativo.active {
-  box-shadow: 0 8px 20px rgba(252, 30, 117, 0.4);
-  transform: scale(1.02);
+  box-shadow: 0 20px 50px rgba(252, 30, 117, 0.5);
+  transform: scale(1.03);
 }
 
 .btn-inativo {
   background: linear-gradient(135deg, #06055b 0%, #1a1a7f 100%);
   color: white !important;
-  padding: 40px 60px !important;
-  font-size: 1.3em !important;
-  border-radius: 8px !important;
-  font-weight: 600 !important;
-  border: 1px solid #fc1e75 !important;
-  box-shadow: 0 4px 12px rgba(252, 30, 117, 0.2);
-  transition: all 0.3s ease;
+  padding: 45px 70px !important;
+  font-size: 1.2em !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  border: none !important;
+  box-shadow: 0 10px 30px rgba(6, 5, 91, 0.25);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-inativo::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(252, 30, 117, 0.3), transparent);
+  transition: left 0.5s ease;
 }
 
 .btn-inativo:hover {
   background: linear-gradient(135deg, #0a0a3f 0%, #2a2a9f 100%) !important;
-  box-shadow: 0 6px 16px rgba(252, 30, 117, 0.3) !important;
-  transform: translateY(-1px);
+  box-shadow: 0 15px 40px rgba(252, 30, 117, 0.4) !important;
+  transform: translateY(-4px);
+}
+
+.btn-inativo:hover::before {
+  left: 100%;
 }
 
 .btn-inativo.active {
-  box-shadow: 0 8px 20px rgba(252, 30, 117, 0.4);
-  transform: scale(1.02);
+  box-shadow: 0 20px 50px rgba(252, 30, 117, 0.5);
+  transform: scale(1.03);
 }
 
 .btn-label {
   display: block;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
 }
 
 .btn-adicionar-campanha {
   display: block;
-  margin: 40px auto 0;
-  padding: 12px 30px !important;
-  background: linear-gradient(135deg, #06055b 0%, #1a1a7f 100%) !important;
-  color: #fc1e75 !important;
-  font-size: 1.1em !important;
-  font-weight: 600 !important;
+  margin: 50px auto 0;
+  padding: 14px 35px !important;
+  background: linear-gradient(135deg, #fc1e75 0%, #ff69b4 100%) !important;
+  color: white !important;
+  font-size: 1.05em !important;
+  font-weight: 700 !important;
   border: none !important;
-  border-radius: 8px !important;
+  border-radius: 10px !important;
   cursor: pointer !important;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   font-family: 'Space Grotesk', sans-serif !important;
-  box-shadow: 0 4px 12px rgba(252, 30, 117, 0.2);
+  box-shadow: 0 8px 20px rgba(252, 30, 117, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-adicionar-campanha::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
 }
 
 .btn-adicionar-campanha:hover {
-  background: linear-gradient(135deg, #0a0a3f 0%, #2a2a9f 100%) !important;
-  color: #ff1493 !important;
-  box-shadow: 0 6px 16px rgba(252, 30, 117, 0.3) !important;
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #ff1493 0%, #ff85c0 100%) !important;
+  box-shadow: 0 12px 30px rgba(252, 30, 117, 0.4) !important;
+  transform: translateY(-3px);
+}
+
+.btn-adicionar-campanha:hover::after {
+  width: 300px;
+  height: 300px;
 }
 
 .btn-adicionar-campanha:active {
-  transform: translateY(0);
+  transform: translateY(-1px);
 }
 
 /* TABLE */
 .table-section {
   overflow-x: auto;
-  padding: 30px;
+  padding: 40px;
 }
 
 .table-header {
@@ -386,16 +442,18 @@ main {
   justify-content: space-between;
   align-items: center;
   gap: 20px;
-  margin-bottom: 30px;
+  margin-bottom: 35px;
   flex-wrap: wrap;
 }
 
 .table-header h2 {
-  font-size: 1.8em;
-  color: #333;
+  font-size: 1.9em;
+  color: #06055b;
   margin: 0;
   flex: 1;
   min-width: 200px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
 }
 
 .table-header .search-input {
@@ -417,34 +475,39 @@ main {
 .table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+  margin-top: 0;
 }
 
 .table thead {
-  background: #f9f9f9;
-  border-bottom: 2px solid #ddd;
+  background: linear-gradient(90deg, #06055b 0%, #1a1a7f 100%);
+  border: none;
 }
 
 .table th {
-  padding: 16px;
+  padding: 18px 20px;
   text-align: left;
-  font-weight: 600;
-  color: #333;
+  font-weight: 700;
+  color: white;
   font-size: 0.95em;
+  letter-spacing: 0.3px;
 }
 
 .table td {
-  padding: 14px 16px;
+  padding: 16px 20px;
   border-bottom: 1px solid #f0f0f0;
   font-size: 0.95em;
+  color: #555;
 }
 
 .table tbody tr {
   transition: all 0.3s ease;
+  background: white;
 }
 
 .table tbody tr:hover {
-  background: #f9f9f9;
+  background: linear-gradient(90deg, rgba(6, 5, 91, 0.02) 0%, rgba(252, 30, 117, 0.02) 100%);
+  border-left: 4px solid #fc1e75;
+  padding-left: 16px;
 }
 
 .table-actions {
@@ -461,51 +524,60 @@ main {
 }
 
 .btn-view {
-  padding: 8px 12px;
+  padding: 10px 16px;
   font-size: 0.9em;
   background: linear-gradient(135deg, #06055b 0%, #1a1a7f 100%);
   color: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(6, 5, 91, 0.2);
 }
 
 .btn-view:hover {
   background: linear-gradient(135deg, #0a0a3f 0%, #2a2a9f 100%);
-  box-shadow: 0 4px 12px rgba(252, 30, 117, 0.3);
+  box-shadow: 0 6px 16px rgba(252, 30, 117, 0.3);
+  transform: translateY(-2px);
 }
 
 .btn-edit-small {
-  padding: 6px 10px;
-  font-size: 0.8em;
+  padding: 8px 14px;
+  font-size: 0.85em;
   background: linear-gradient(135deg, #06055b 0%, #1a1a7f 100%);
   color: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(6, 5, 91, 0.15);
 }
 
 .btn-edit-small:hover {
   background: linear-gradient(135deg, #0a0a3f 0%, #2a2a9f 100%);
-  box-shadow: 0 2px 6px rgba(252, 30, 117, 0.2);
+  box-shadow: 0 4px 10px rgba(252, 30, 117, 0.25);
+  transform: translateY(-1px);
 }
 
 .btn-delete-small {
-  padding: 6px 10px;
-  font-size: 0.8em;
-  background: linear-gradient(135deg, #06055b 0%, #1a1a7f 100%);
+  padding: 8px 14px;
+  font-size: 0.85em;
+  background: linear-gradient(135deg, #ff4757 0%, #ff6b7a 100%);
   color: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(255, 71, 87, 0.15);
 }
 
 .btn-delete-small:hover {
-  background: linear-gradient(135deg, #0a0a3f 0%, #2a2a9f 100%);
-  box-shadow: 0 2px 6px rgba(252, 30, 117, 0.2);
+  background: linear-gradient(135deg, #e63946 0%, #ff5a68 100%);
+  box-shadow: 0 4px 10px rgba(255, 71, 87, 0.25);
+  transform: translateY(-1px);
 }
 
 .btn-status-small {
