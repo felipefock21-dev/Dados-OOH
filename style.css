@@ -607,6 +607,7 @@ main {
   background-color: rgba(0, 0, 0, 0);
   overflow-y: auto;
   transition: background-color 0.3s ease;
+  animation: fadeInOverlay 0.3s ease forwards;
 }
 
 .modal.active {
@@ -614,6 +615,11 @@ main {
   align-items: center;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.5);
+  animation: fadeInOverlay 0.3s ease forwards;
+}
+
+.modal.closing {
+  animation: fadeOutOverlay 0.3s ease forwards;
 }
 
 .modal-content {
@@ -628,7 +634,7 @@ main {
   animation: slideInUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.modal:not(.active) .modal-content {
+.modal.closing .modal-content {
   animation: slideOutDown 0.3s cubic-bezier(0.36, 0, 0.66, -0.56) forwards;
 }
 
@@ -639,6 +645,24 @@ main {
 .campanhas-container {
   margin-top: 30px;
   overflow-x: auto;
+}
+
+@keyframes fadeInOverlay {
+  from {
+    background-color: rgba(0, 0, 0, 0);
+  }
+  to {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+}
+
+@keyframes fadeOutOverlay {
+  from {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  to {
+    background-color: rgba(0, 0, 0, 0);
+  }
 }
 
 @keyframes slideInUp {

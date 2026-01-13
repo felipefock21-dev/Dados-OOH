@@ -501,8 +501,9 @@
     }
 
     function fecharModal() {
-      modal.classList.remove('active');
+      modal.classList.add('closing');
       setTimeout(() => {
+        modal.classList.remove('active', 'closing');
         registroEmEdicao = null;
         formulario.reset();
       }, 300);
@@ -602,9 +603,10 @@
     }
 
     function fecharModalCampanhas() {
-      modalCampanhas.classList.remove('active');
+      modalCampanhas.classList.add('closing');
       // Garantir que o spinner de campanhas está oculto após animação
       setTimeout(() => {
+        modalCampanhas.classList.remove('active', 'closing');
         campanhasSpinner.style.display = 'none';
         tabelaCampanhas.style.display = 'none';
       }, 300);
@@ -826,8 +828,9 @@
     }
 
     function fecharModalNovaCampanha() {
-      modalNovaCampanha.classList.remove('active');
+      modalNovaCampanha.classList.add('closing');
       setTimeout(() => {
+        modalNovaCampanha.classList.remove('active', 'closing');
         document.getElementById('formNovaCampanha').reset();
       }, 300);
     }
