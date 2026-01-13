@@ -43,6 +43,7 @@ body {
 .header-logo {
   height: 42px;
   width: auto;
+  max-height: 32px;
   filter: drop-shadow(0 2px 4px rgba(217, 30, 99, 0.3));
 }
 
