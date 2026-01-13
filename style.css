@@ -1085,7 +1085,6 @@ main {
 
 /* ANIMAÇÕES PARA TABELA DE CAMPANHAS */
 #tabelaCampanhas.animate {
-  opacity: 0;
   animation: fadeInSlideUp 0.6s ease-out forwards;
 }
 

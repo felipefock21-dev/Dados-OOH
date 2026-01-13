@@ -399,14 +399,11 @@
         btnAtivo.classList.remove('active');
       }
       
-      // Remover animação anterior
+      // Remover animação anterior e manter invisível enquanto renderiza
       tabelaSectionContainer.classList.remove('animate');
-      
-      // Mostrar tabela
+      tabelaSectionContainer.style.opacity = '0';
       tabelaSectionContainer.style.display = 'block';
-      
-      // Força um reflow para limpar a animação anterior
-      void tabelaSectionContainer.offsetWidth;
+      tabelaSectionContainer.style.pointerEvents = 'none';
       
       // Determinar o status da campanha correspondente
       const statusCampanha = status === 'Ativo' ? 'Ativa' : 'Inativa';
@@ -440,33 +437,31 @@
       
       if (clientes.length === 0) {
         tabelaDadosBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 30px;">Nenhum cliente encontrado com campanhas ' + statusCampanha.toLowerCase() + '</td></tr>';
-        // Adicionar animação mesmo com mensagem vazia
-        setTimeout(() => {
-          tabelaSectionContainer.classList.add('animate');
-        }, 0);
-        return;
+      } else {
+        clientes.forEach((cliente, index) => {
+          const linha = document.createElement('tr');
+          
+          linha.innerHTML = `
+            <td><strong>${cliente.nome}</strong></td>
+            <td>${cliente.campanhas}</td>
+            <td>
+              <div class="table-actions">
+                <button class="btn-view" onclick="abrirModalCampanhas('${cliente.nome}', '${statusCampanha}')">Visualizar Campanha</button>
+              </div>
+            </td>
+          `;
+          
+          tabelaDadosBody.appendChild(linha);
+        });
       }
       
-      clientes.forEach((cliente, index) => {
-        const linha = document.createElement('tr');
-        
-        linha.innerHTML = `
-          <td><strong>${cliente.nome}</strong></td>
-          <td>${cliente.campanhas}</td>
-          <td>
-            <div class="table-actions">
-              <button class="btn-view" onclick="abrirModalCampanhas('${cliente.nome}', '${statusCampanha}')">Visualizar Campanha</button>
-            </div>
-          </td>
-        `;
-        
-        tabelaDadosBody.appendChild(linha);
-      });
-      
       // Adicionar animação após renderizar as linhas
+      // Use setTimeout para garantir que o navegador completou o render
       setTimeout(() => {
+        tabelaSectionContainer.style.opacity = '1';
+        tabelaSectionContainer.style.pointerEvents = 'auto';
         tabelaSectionContainer.classList.add('animate');
-      }, 0);
+      }, 10);
       
       // Atualizar listener de busca
       searchInput.addEventListener('input', filtrarTabela);
@@ -538,9 +533,6 @@
       tabelaCampanhas.style.display = 'none';
       tabelaCampanhas.classList.remove('animate');
       
-      // Força um reflow
-      void tabelaCampanhas.offsetWidth;
-      
       tituloModalCampanhas.textContent = `Visualizar Campanha - ${nomeCliente} (${status})`;
       modalCampanhas.classList.add('active');
       
@@ -556,11 +548,14 @@
       if (campanhasDoCliente.length === 0) {
         tabelaCampanhasBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 30px;">Nenhuma campanha encontrada</td></tr>';
         campanhasSpinner.style.display = 'none';
+        tabelaCampanhas.style.opacity = '0';
         tabelaCampanhas.style.display = 'table';
-        // Adicionar animação mesmo com mensagem vazia
+        
+        // Animar após renderizar
         setTimeout(() => {
+          tabelaCampanhas.style.opacity = '1';
           tabelaCampanhas.classList.add('animate');
-        }, 0);
+        }, 10);
         return;
       }
       
@@ -594,12 +589,14 @@
       });
       
       campanhasSpinner.style.display = 'none';
+      tabelaCampanhas.style.opacity = '0';
       tabelaCampanhas.style.display = 'table';
       
       // Adicionar animação após renderizar as linhas
       setTimeout(() => {
+        tabelaCampanhas.style.opacity = '1';
         tabelaCampanhas.classList.add('animate');
-      }, 0);
+      }, 10);
     }
 
     function fecharModalCampanhas() {
