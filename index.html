@@ -399,6 +399,9 @@
         btnAtivo.classList.remove('active');
       }
       
+      // Remover animação anterior
+      tabelaSectionContainer.classList.remove('animate');
+      
       // Mostrar tabela
       tabelaSectionContainer.style.display = 'block';
       
@@ -434,6 +437,10 @@
       
       if (clientes.length === 0) {
         tabelaDadosBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 30px;">Nenhum cliente encontrado com campanhas ' + statusCampanha.toLowerCase() + '</td></tr>';
+        // Adicionar animação mesmo com mensagem vazia
+        setTimeout(() => {
+          tabelaSectionContainer.classList.add('animate');
+        }, 0);
         return;
       }
       
@@ -452,6 +459,11 @@
         
         tabelaDadosBody.appendChild(linha);
       });
+      
+      // Adicionar animação após renderizar as linhas
+      setTimeout(() => {
+        tabelaSectionContainer.classList.add('animate');
+      }, 0);
       
       // Atualizar listener de busca
       searchInput.addEventListener('input', filtrarTabela);
@@ -521,6 +533,7 @@
     function abrirModalCampanhas(nomeCliente, status) {
       campanhasSpinner.style.display = 'block';
       tabelaCampanhas.style.display = 'none';
+      tabelaCampanhas.classList.remove('animate');
       
       tituloModalCampanhas.textContent = `Visualizar Campanha - ${nomeCliente} (${status})`;
       modalCampanhas.classList.add('active');
@@ -538,6 +551,10 @@
         tabelaCampanhasBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 30px;">Nenhuma campanha encontrada</td></tr>';
         campanhasSpinner.style.display = 'none';
         tabelaCampanhas.style.display = 'table';
+        // Adicionar animação mesmo com mensagem vazia
+        setTimeout(() => {
+          tabelaCampanhas.classList.add('animate');
+        }, 0);
         return;
       }
       
@@ -572,6 +589,11 @@
       
       campanhasSpinner.style.display = 'none';
       tabelaCampanhas.style.display = 'table';
+      
+      // Adicionar animação após renderizar as linhas
+      setTimeout(() => {
+        tabelaCampanhas.classList.add('animate');
+      }, 0);
     }
 
     function fecharModalCampanhas() {
