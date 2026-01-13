@@ -192,12 +192,12 @@
           <!-- Linha 5: Exibidora, Mês -->
           <div class="form-row">
             <div class="form-group">
-              <label for="inputExibidora">Exibidora *</label>
-              <input type="text" id="inputExibidora" placeholder="Nome da exibidora" required>
+              <label for="inputExibidora">Exibidora</label>
+              <input type="text" id="inputExibidora" placeholder="Nome da exibidora">
             </div>
             <div class="form-group">
-              <label for="selectMes">Mês de Exibição *</label>
-              <select id="selectMes" required>
+              <label for="selectMes">Mês de Exibição</label>
+              <select id="selectMes">
                 <option value="">Selecione...</option>
                 <option value="Janeiro">Janeiro</option>
                 <option value="Fevereiro">Fevereiro</option>
@@ -218,24 +218,24 @@
           <!-- Linha 6: Datas -->
           <div class="form-row">
             <div class="form-group">
-              <label for="inputDataInicio">Início da Campanha *</label>
-              <input type="date" id="inputDataInicio" required>
+              <label for="inputDataInicio">Início da Campanha</label>
+              <input type="date" id="inputDataInicio">
             </div>
             <div class="form-group">
-              <label for="inputDataFim">Término da Campanha *</label>
-              <input type="date" id="inputDataFim" required>
+              <label for="inputDataFim">Término da Campanha</label>
+              <input type="date" id="inputDataFim">
             </div>
           </div>
 
           <!-- Linha 7: Impactos e Investimento -->
           <div class="form-row">
             <div class="form-group">
-              <label for="inputImpactos">Impactos Total *</label>
-              <input type="number" id="inputImpactos" placeholder="0" min="0" required>
+              <label for="inputImpactos">Impactos Total</label>
+              <input type="number" id="inputImpactos" placeholder="0" min="0">
             </div>
             <div class="form-group">
-              <label for="inputInvestimento">Investimento (R$) *</label>
-              <input type="number" id="inputInvestimento" placeholder="0,00" step="0.01" min="0" required>
+              <label for="inputInvestimento">Investimento (R$)</label>
+              <input type="number" id="inputInvestimento" placeholder="0,00" step="0.01" min="0">
             </div>
           </div>
 
@@ -502,8 +502,10 @@
 
     function fecharModal() {
       modal.classList.remove('active');
-      registroEmEdicao = null;
-      formulario.reset();
+      setTimeout(() => {
+        registroEmEdicao = null;
+        formulario.reset();
+      }, 300);
     }
 
     function confirmarDeletar(nomeCliente) {
@@ -601,9 +603,11 @@
 
     function fecharModalCampanhas() {
       modalCampanhas.classList.remove('active');
-      // Garantir que o spinner de campanhas está oculto
-      campanhasSpinner.style.display = 'none';
-      tabelaCampanhas.style.display = 'none';
+      // Garantir que o spinner de campanhas está oculto após animação
+      setTimeout(() => {
+        campanhasSpinner.style.display = 'none';
+        tabelaCampanhas.style.display = 'none';
+      }, 300);
     }
 
     // ============================================
@@ -823,7 +827,9 @@
 
     function fecharModalNovaCampanha() {
       modalNovaCampanha.classList.remove('active');
-      document.getElementById('formNovaCampanha').reset();
+      setTimeout(() => {
+        document.getElementById('formNovaCampanha').reset();
+      }, 300);
     }
 
     // Função auxiliar para converter datas de YYYY-MM-DD para DD/MM/AAAA
@@ -883,7 +889,7 @@
           'Início da campanha': formatarDataParaPlanilha(dataInicio),
           'Término da campanha': formatarDataParaPlanilha(dataFim),
           'Impactos Total': document.getElementById('inputImpactos').value,
-          'Investimento': 'R$ ' + parseFloat(document.getElementById('inputInvestimento').value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          'Investimento': document.getElementById('inputInvestimento').value ? 'R$ ' + parseFloat(document.getElementById('inputInvestimento').value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ''
         };
 
         // Se for edição, adicionar informações de atualização
