@@ -609,18 +609,20 @@ main {
 }
 
 .modal.active {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal.active .modal-content {
   animation: slideInUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  transform: translateY(0);
-  opacity: 1;
 }
 
 .modal.closing {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: rgba(0, 0, 0, 0.5);
   pointer-events: none;
 }
@@ -638,11 +640,6 @@ main {
   max-height: 85vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 1;
 }
 
 .modal-content-large {
@@ -656,22 +653,22 @@ main {
 
 @keyframes slideInUp {
   from {
-    transform: translate(-50%, calc(-50% + 50px));
+    transform: translateY(50px);
     opacity: 0;
   }
   to {
-    transform: translate(-50%, -50%);
+    transform: translateY(0);
     opacity: 1;
   }
 }
 
 @keyframes slideOutDown {
   from {
-    transform: translate(-50%, -50%);
+    transform: translateY(0);
     opacity: 1;
   }
   to {
-    transform: translate(-50%, calc(-50% + 50px));
+    transform: translateY(50px);
     opacity: 0;
   }
 }
