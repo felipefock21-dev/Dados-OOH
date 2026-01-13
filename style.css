@@ -606,8 +606,6 @@ main {
   height: 100%;
   background-color: rgba(0, 0, 0, 0);
   overflow-y: auto;
-  transition: background-color 0.3s ease;
-  animation: fadeInOverlay 0.3s ease forwards;
 }
 
 .modal.active {
@@ -619,6 +617,10 @@ main {
 }
 
 .modal.closing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
   animation: fadeOutOverlay 0.3s ease forwards;
 }
 
