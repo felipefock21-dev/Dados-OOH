@@ -405,6 +405,9 @@
       // Mostrar tabela
       tabelaSectionContainer.style.display = 'block';
       
+      // Força um reflow para limpar a animação anterior
+      void tabelaSectionContainer.offsetWidth;
+      
       // Determinar o status da campanha correspondente
       const statusCampanha = status === 'Ativo' ? 'Ativa' : 'Inativa';
       
@@ -534,6 +537,9 @@
       campanhasSpinner.style.display = 'block';
       tabelaCampanhas.style.display = 'none';
       tabelaCampanhas.classList.remove('animate');
+      
+      // Força um reflow
+      void tabelaCampanhas.offsetWidth;
       
       tituloModalCampanhas.textContent = `Visualizar Campanha - ${nomeCliente} (${status})`;
       modalCampanhas.classList.add('active');
