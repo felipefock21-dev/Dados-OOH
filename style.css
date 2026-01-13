@@ -628,7 +628,7 @@ main {
 }
 
 .modal.closing .modal-content {
-  animation: slideOutDown 0.3s cubic-bezier(0.36, 0, 0.66, -0.56) forwards !important;
+  animation: slideOutDown 0.2s cubic-bezier(0.36, 0, 0.66, -0.56) forwards !important;
 }
 
 .modal-content {
@@ -668,7 +668,7 @@ main {
     opacity: 1;
   }
   to {
-    transform: translateY(50px);
+    transform: translateY(150px);
     opacity: 0;
   }
 }
