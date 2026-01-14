@@ -322,7 +322,7 @@ main {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(217, 30, 99, 0.6) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(76, 175, 80, 0.35) 0%, transparent 70%);
   opacity: 0;
   transition: opacity 0.5s ease;
 }
@@ -330,9 +330,9 @@ main {
 .btn-ativo:hover {
   background: linear-gradient(135deg, #0a0a3f 0%, #2a2a9f 100%) !important;
   box-shadow: 
-    0 0 20px rgba(217, 30, 99, 0.5),
-    0 20px 50px rgba(217, 30, 99, 0.4),
-    inset 0 0 20px rgba(217, 30, 99, 0.2) !important;
+    0 0 15px rgba(76, 175, 80, 0.3),
+    0 15px 35px rgba(76, 175, 80, 0.25),
+    inset 0 0 15px rgba(76, 175, 80, 0.1) !important;
   transform: translateY(-6px) scale(1.05);
 }
 
@@ -341,7 +341,7 @@ main {
 }
 
 .btn-ativo.active {
-  box-shadow: 0 0 30px rgba(217, 30, 99, 0.6), 0 20px 50px rgba(217, 30, 99, 0.5);
+  box-shadow: 0 0 20px rgba(76, 175, 80, 0.4), 0 20px 50px rgba(76, 175, 80, 0.25);
   transform: scale(1.08);
 }
 
@@ -420,7 +420,7 @@ main {
   width: 0;
   height: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5);
+  background: transparent;
   transform: translate(-50%, -50%);
   transition: width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: none;
