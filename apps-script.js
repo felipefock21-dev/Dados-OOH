@@ -38,7 +38,7 @@ function doPost(e) {
       // Criar nova linha
       const novaLinha = headers.map(header => data[header] || '');
       sheet.appendRow(novaLinha);
-      Logger.log('✓ Nova linha adicionada');
+      Logger.log('Nova linha adicionada');
       
       return HtmlService.createHtmlOutput(JSON.stringify({
         sucesso: true,
@@ -59,7 +59,7 @@ function doPost(e) {
       const colunaFinal = headers.length;
       
       sheet.getRange(rowIndex, 1, 1, colunaFinal).setValues([novaLinha]);
-      Logger.log('✓ Linha atualizada');
+      Logger.log('Linha atualizada');
       
       return HtmlService.createHtmlOutput(JSON.stringify({
         sucesso: true,
@@ -89,7 +89,7 @@ function doPost(e) {
       
       // Deletar a linha inteira (não apenas limpar conteúdo)
       sheet.deleteRow(rowIndex);
-      Logger.log('✓ Linha deletada com sucesso');
+      Logger.log('Linha deletada com sucesso');
       
       return HtmlService.createHtmlOutput(JSON.stringify({
         sucesso: true,
@@ -102,7 +102,7 @@ function doPost(e) {
     }
     
   } catch (error) {
-    Logger.log('❌ Erro:', error.toString());
+    Logger.log('Erro:', error.toString());
     return HtmlService.createHtmlOutput(JSON.stringify({
       sucesso: false,
       erro: error.toString()
