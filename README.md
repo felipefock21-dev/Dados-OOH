@@ -1,10 +1,10 @@
-# 📊 Gerenciador de Dados OOH
+# Gerenciador de Dados OOH
 
 Sistema de gerenciamento de dados Out-of-Home integrado com Google Sheets via Cloudflare Workers.
 
-## 🚀 Status
+## Status
 
-✅ **Sistema 100% funcional e deployado**
+**Sistema 100% funcional e deployado**
 
 - **Worker API**: https://dados-ooh-worker.kaike-458.workers.dev/api
 - **Frontend**: https://dados-ooh.pages.dev
@@ -58,14 +58,14 @@ python -m http.server 8000
 # (configurado via GitHub Actions)
 ```
 
-## 📊 Funcionalidades
+## Funcionalidades
 
-- ✅ Listar clientes com dados agregados (via Worker API - GET)
-- ✅ Criar novos registros (via Google Apps Script - POST)
-- ✅ Editar clientes (via Apps Script)
-- ✅ Deletar registros (via Apps Script)
-- ✅ Buscar/Filtrar por status
-- ✅ Regiões/Estados/Cidades dinâmicas (API IBGE)
+- Listar clientes com dados agregados (via Worker API - GET)
+- Criar novos registros (via Google Apps Script - POST)
+- Editar clientes (via Apps Script)
+- Deletar registros (via Apps Script)
+- Buscar/Filtrar por status
+- Regiões/Estados/Cidades dinâmicas (API IBGE)
 
 - ✅ Sincronização em tempo real com Google Sheets
 
@@ -229,7 +229,7 @@ wrangler deploy
 - Frontend: `https://seu-projeto.pages.dev`
 - Worker API: `https://seu-worker.seu-subdominio.workers.dev`
 
-## 📝 Notas
+## Notas
 
 - Dados de exemplo são usados se Google Sheets não estiver configurado
 - Busca funciona em tempo real

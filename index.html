@@ -38,7 +38,7 @@
           <input 
             type="text" 
             id="searchInput" 
-            placeholder="🔍 Buscar cliente..."
+            placeholder="Buscar cliente..."
             class="search-input"
           >
         </div>
@@ -280,8 +280,8 @@
     // Google Apps Script para escrita (POST)
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwej-7FBpuupb-RmD6LVA0PICMEvb0egdBSmzHRnfokfXsE_VPjPDehDqKuxTwJe0l18Q/exec';
     
-    console.log('🚀 API_BASE:', API_BASE);
-    console.log('📝 APPS_SCRIPT_URL:', APPS_SCRIPT_URL);
+    console.log('API_BASE:', API_BASE);
+    console.log('APPS_SCRIPT_URL:', APPS_SCRIPT_URL);
     
     // ============================================
     // ESTADO E DOM
@@ -582,8 +582,8 @@
           <td><span class="status ${statusCampanha.toLowerCase()}">${statusCampanha}</span></td>
           <td>
             <div class="table-actions-small">
-              <button class="btn-edit-small" onclick="editarCampanha(${indiceDados})">✏️ Editar</button>
-              <button class="btn-delete-small" onclick="deletarCampanha(${indiceDados})">🗑️ Deletar</button>
+              <button class="btn-edit-small" onclick="editarCampanha(${indiceDados})">Editar</button>
+              <button class="btn-delete-small" onclick="deletarCampanha(${indiceDados})">Deletar</button>
             </div>
           </td>
         `;
@@ -759,7 +759,7 @@
       }
       
       const campanha = dados[index];
-      console.log('🗑️ Deletando campanha:', campanha['Campanha']);
+      console.log('Deletando campanha:', campanha['Campanha']);
       
       // Mostrar loading
       const modalLoading = document.getElementById('modalLoading');
@@ -856,7 +856,7 @@
           throw new Error('Apps Script URL não foi configurado. Verifique o README.md para instruções.');
         }
 
-        console.log('📝 Iniciando salvarNovaCampanha...');
+        console.log('Iniciando salvarNovaCampanha...');
         const isEdicao = campanhaEmEdicao !== null;
         console.log('Modo:', isEdicao ? 'EDIÇÃO' : 'CRIAÇÃO');
         console.log('campanhaEmEdicao:', campanhaEmEdicao);
@@ -902,7 +902,7 @@
           console.log('Editando - rowIndex:', novaLinha.rowIndex, 'index original:', campanhaEmEdicao.index);
         }
 
-        console.log('📊 Dados a enviar:', JSON.stringify(novaLinha));
+        console.log('Dados a enviar:', JSON.stringify(novaLinha));
 
         // Mostrar modal de loading
         const modalLoading = document.getElementById('modalLoading');

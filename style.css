@@ -501,14 +501,18 @@ main {
 }
 
 .table tbody tr {
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   background: white;
+  transform: scale(1);
 }
 
 .table tbody tr:hover {
   background: linear-gradient(90deg, rgba(6, 5, 91, 0.02) 0%, rgba(217, 30, 99, 0.02) 100%);
   border-left: 4px solid #d91e63;
   padding-left: 16px;
+  transform: scale(1.08);
+  box-shadow: 0 8px 24px rgba(217, 30, 99, 0.15);
+  font-weight: 500;
 }
 
 .table-actions {
