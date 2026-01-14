@@ -509,8 +509,6 @@ main {
 
 .table tbody tr:hover {
   background: linear-gradient(90deg, rgba(217, 30, 99, 0.08) 0%, rgba(6, 5, 91, 0.08) 100%);
-  border-left: 4px solid #d91e63;
-  padding-left: 16px;
   transform: scale(1.15) !important;
   box-shadow: 0 12px 32px rgba(217, 30, 99, 0.25);
   font-weight: 600;
